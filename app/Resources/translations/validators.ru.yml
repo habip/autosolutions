@@ -1,0 +1,10 @@
+registration:
+    password_repeat: 'Пароль и его подтверждение должны совпадать'
+organization_info:
+    legal_form: Выберите организационную форму
+password_too_weak: Слишком простой пароль
+'Your password must be at least {{length}} characters long.': Длина пароля должна быть не менее {{length}} символов
+'Your password must include at least one letter.': Ваш пароль должен содержать хотя бы одину букву английского алфавита
+'Your password must include at least one number.': Ваш пароль должен содержать хотя бы одну цифру
+'Post is busy for given time': Пост занят на данное время
+'Time cannot be in the past': Время не должно быть в прошлом

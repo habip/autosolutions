@@ -1,0 +1,15 @@
+{% macro integer(rating) %}
+    <i class="{% if rating >= 1 %}icon_star voted{% else %}icon_star_alt{% endif %}"></i>
+    <i class="{% if rating >= 2 %}icon_star voted{% else %}icon_star_alt{% endif %}"></i>
+    <i class="{% if rating >= 3 %}icon_star voted{% else %}icon_star_alt{% endif %}"></i>
+    <i class="{% if rating >= 4 %}icon_star voted{% else %}icon_star_alt{% endif %}"></i>
+    <i class="{% if rating >= 5 %}icon_star voted{% else %}icon_star_alt{% endif %}"></i>
+{% endmacro %}
+
+{% macro decimal(rating) %}
+    <i class="{% if rating >= 1 %}icon_star voted{% else %}icon_star_alt{% endif %}"></i>
+    <i class="{% if rating >= 2 %}icon_star voted{% else %}icon_star_alt{% endif %}"></i>
+    <i class="{% if rating >= 3 %}icon_star voted{% else %}icon_star_alt{% endif %}"></i>
+    <i class="{% if rating >= 4 %}icon_star voted{% else %}icon_star_alt{% endif %}"></i>
+    <i class="{% if rating >= 5 %}icon_star voted{% else %}icon_star_alt{% endif %}"></i>
+{% endmacro %}

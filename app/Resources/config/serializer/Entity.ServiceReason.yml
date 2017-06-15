@@ -1,0 +1,10 @@
+AppBundle\Entity\ServiceReason:
+  exclusion_policy: ALL
+  properties:
+    id:
+      expose: true
+    name:
+      expose: true
+    groups:
+      expose: true
+      groups: [groups]

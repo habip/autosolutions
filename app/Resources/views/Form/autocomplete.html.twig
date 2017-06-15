@@ -1,0 +1,10 @@
+{% block autocomplete_widget %}
+    {%- if data_name -%}
+    {%- if attr is defined -%}
+        {% set attr = attr|merge({'data-name': data_name}) %}
+    {% else %}
+        {% set attr = {'data-name': data_name} %}
+    {%- endif -%}
+    {%- endif -%}
+    {{ block('form_widget_simple') }}
+{% endblock %}

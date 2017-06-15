@@ -1,0 +1,16 @@
+AppBundle\Entity\Message\MessageStatus:
+  exclusion_policy: ALL
+  properties:
+    user:
+      expose: true
+    message:
+      expose: true
+    deliveredTimestamp:
+      expose: true
+    readTimestamp:
+      expose: true
+    status:
+      expose: true
+    stateId:
+      expose: true
+    

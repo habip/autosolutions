@@ -1,0 +1,9 @@
+<a
+href="#"
+class="btn _locality_choice"
+data-toggle="modal"
+data-target="#locality_choice"
+data-coords="{{ app.request.attributes.get('_locality').latitude }},{{ app.request.attributes.get('_locality').longitude }}"
+data-latitude="{{ app.request.attributes.get('_locality').latitude }}"
+data-longitude="{{ app.request.attributes.get('_locality').longitude }}"
+><span class="text-muted">Ваш город: </span>{{ app.request.attributes.get('_locality').name }}</a>

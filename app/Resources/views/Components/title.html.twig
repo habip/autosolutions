@@ -1,0 +1,22 @@
+{% if mode is defined and mode=='mini' %}
+<div class="content mini bg-white border-b {% if class is defined %}{{class}}{% endif %}">
+    <h4 class="page-heading text-uppercase push-15-b">
+        {{title}}{% if description is defined %} <small>{{description}}</small>{% endif %}
+    </h4>
+</div>
+{% else %}
+<div class="content push-50-t">
+<div class="row border-b push-10-t">
+<div class="col-lg-6 text-left">
+<a class="btn btn-default" href="javascript:history.back()"><i class="fa fa-angle-left"></i> Назад</a>
+</div>
+<div class="col-lg-6">
+<div class="text-right{% if class is defined %}{{class}}{% endif %}">
+    <h5 class="font-w300 text-uppercase text-gray-dark push-10-b push-10-t">
+        <i class="si si-note"></i> {{title}}{% if description is defined %} <small>{{description}}</small>{% endif %}
+    </h5>
+</div>
+</div>
+</div>
+</div>
+{% endif %}

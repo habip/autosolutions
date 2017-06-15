@@ -1,0 +1,67 @@
+<form method="POST" action="{{ path('_car_owner_car_add') }}">
+        <div class="modal fade in" id="car_add" tabindex="-1" role="dialog" aria-hidden="false">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="block block-themed">
+                        <div class="block-header bg-primary-dark">
+                            <ul class="block-options">
+                                <li>
+                                    <div data-dismiss="modal"><i class="si si-close"></i></div>
+                                </li>
+                            </ul>
+                            <h4 class="block-title">ДОБАВИТЬ АВТОМОБИЛЬ</h4>
+                        </div>
+                        <div class="block-content">
+                            <div class="alert alert-danger hide" role="alert">
+                            </div>
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                            <label for="carservice_locality_search">
+                                                <span><h5>Марка</h5></span>
+                                            </label>
+                                            <input type="text"class="form-control input-lg" name="car[brand]" data-search="{{path('_search_brand')}}">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                            <label for="carservice_locality_search">
+                                                <span><h5>Модель</h5></span>
+                                            </label>
+                                            <input type="text" class="form-control input-lg" name="car[model]" data-search="{{path('_search_model')}}" data-related="car[brand]" data-related-param="brand">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                            <label for="carservice_locality_search">
+                                                <span><h5>Год</h5></span>
+                                            </label>
+                                            <input type="text" class="form-control input-lg input_year" name="car[year]">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                            <label for="carservice_locality_search">
+                                                <span><h5>Пробег</h5></span>
+                                            </label>
+                                            <input type="text" class="form-control input-lg input_mileage" name="car[mileage]">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                            <label for="carservice_locality_search">
+                                                <span><h5>Гос.номер</h5></span>
+                                            </label>
+                                            {{ include(':Form:car_number.html.twig') }}
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="btn btn-default" data-dismiss="modal">Отмена</div>
+                        <div class="btn btn-primary _add">Добавить</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>

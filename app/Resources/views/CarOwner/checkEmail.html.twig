@@ -1,0 +1,11 @@
+{% extends '::mainLayout.html.twig' %} 
+
+{% block title %}{{ 'registration.specify_registration_data'|trans }}{% endblock %}
+
+{% block body %}
+
+        <div class='_t_a_c' style='padding-top: 1px;position: relative;'>
+            <div class='alert alert-success reg-alert' style="margin-top: 200px;font-size:19px; z-index: 100;"><a href="{{path('_login')}}">{{ 'registration.check_email'|trans ({'%email%': user.email}) }}. Войти</a></div>
+        </div>
+
+{% endblock %}

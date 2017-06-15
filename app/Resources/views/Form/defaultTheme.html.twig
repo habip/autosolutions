@@ -1,0 +1,78 @@
+{% block form_row %}
+    <div {{ block('form_row_attributes') }}>
+        <div class="col-md-12">
+            <div class="form-material">
+                {% set w_attr = {'class': 'form-control'} -%}
+                {%- if widget_attr is defined -%}
+                    {% set w_attr = w_attr|merge(widget_attr) %}
+                {%- endif -%}
+                {{ form_widget(form, {'attr': w_attr}) }}
+                <label for="material-text">{%if label is defined %}{{ label | trans }}{%endif%}</label>
+            </div>
+            {% if form.vars.errors|length > 0 %}
+            <div class="help-block text-right">{{ form_errors(form)}}</div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock form_row %}
+
+{% block datetime_widget -%}
+    {% if widget == 'single_text' %}
+        <div id="{{ id }}_container" class="input-group date"{% if attr['data-date-format'] is defined %} data-date-format="{{ attr['data-date-format'] }}"{% endif %} {{ block('form_row_attributes') }}>
+            {% set type = 'text' %}
+            {{ block('form_widget_simple') }}
+            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+        </div>
+    {% else %}
+        {{- form_widget(form.date) -}}
+        {{- form_widget(form.time) -}}
+    {% endif %}
+{%- endblock datetime_widget %}
+
+{% block form_row_attributes -%}
+    id="{{ id }}_form_group" class="form-group{% if form.vars.errors|length > 0 %} has-error{% endif %}"
+    {%- if form_row_attr is defined -%}
+    {%- for attrname, attrvalue in form_row_attr -%}
+        {{- " " -}}
+        {%- if attrvalue is sameas(true) -%}
+            {{- attrname }}="{{ attrname }}"
+        {%- elseif attrvalue is not sameas(false) -%}
+            {{- attrname }}="{{ attrvalue }}"
+        {%- endif -%}
+    {%- endfor -%}
+    {%- endif -%}
+{%- endblock form_row_attributes %}
+
+{% block captcha_widget %}
+{% spaceless %}
+        <a href="javascript:reload_{{ image_id }}();" title="{{ 'Renew'|trans({}, 'gregwar_captcha') }}" onClick="document.getElementById('{{ image_id }}').src='{{ captcha_code }}?n='+new Date().getTime()"><img class="vert-offset-top-1" id="{{ image_id }}" src="{{ captcha_code }}" alt="" title="captcha" width="{{ captcha_width }}" height="{{ captcha_height }}" /></a>
+        {% set w_attr = {'class': 'form-control vert-offset-top-1'} -%}
+        {%- if widget_attr is defined -%}
+            {% set w_attr = w_attr|merge(widget_attr) %}
+        {%- endif -%}
+        {{ form_widget(form, {'attr': w_attr}) }}
+{% endspaceless %}
+{% endblock %}
+
+
+{% block submit_widget -%}
+    {%- set type = type|default('submit') -%}
+    {%- if attr is defined -%}
+        {% if attr.class is not defined %}
+        {% set attr = attr|merge({'class': 'btn btn-primary'}) %}
+        {% endif %}
+    {%- else -%}
+        {% set attr = {'class': 'btn btn-primary'} %}
+    {%- endif -%}
+    <div class="col-sm-12">
+    <button type="{{ type|default('button') }}" {{ block('button_attributes') }}>{{ label|trans({}, translation_domain)|raw }}</button>
+    </div>
+{%- endblock submit_widget %}
+
+{% block phone_widget %}
+    {% set w_attr = {'class': 'form-control'} -%}
+    {%- if widget_attr is defined -%}
+        {% set w_attr = w_attr|merge(widget_attr) %}
+    {%- endif -%}
+    {{ form_widget(form, {'attr': w_attr}) }}
+{% endblock %}s

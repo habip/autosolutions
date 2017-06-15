@@ -1,0 +1,9 @@
+AppBundle\Entity\CarServicePost:
+  exclusion_policy: ALL
+  properties:
+    id:
+      expose: true
+    name:
+      expose: true
+    description:
+      expose: true

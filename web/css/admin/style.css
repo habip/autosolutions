@@ -1,0 +1,11 @@
+.logo {
+    text-align: center;
+}
+
+.blocked td {
+    color: #c0c0c0;
+}
+
+.working-hours .x-form-text-default {
+    padding: 2px;
+}

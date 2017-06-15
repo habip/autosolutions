@@ -1,0 +1,577 @@
+<script>
+/*
+var appClient = {
+    listenerAdd: function(func){
+        console.log(func);
+    },
+    notificationCreate: function(data){
+        console.log(data);
+    }
+};
+*/
+
+
+
+//LOAD DIALOG LIST
+    var api = {
+
+        websocket: {
+            taskId: null,
+            connectComplete: null,
+
+            connect: function(par) {
+                this.taskId = par.taskId;
+                this.connectComplete = par.connectComplete;
+                this.sock = new SockJS(par.host);
+                this.sock.onopen = $.proxy(this.onopen, this);
+                this.sock.onmessage = $.proxy(this.onmessage, this);
+                this.sock.onheartbeat = $.proxy(this.onheartbeat, this);
+                this.setHeartbeatTimeout();
+            },
+            setHeartbeatTimeout: function() {
+                if (this.timeout) {
+                    clearTimeout(this.timeout);
+                }
+                this.timeout = setTimeout($.proxy(this.reconnect, this), 60000);
+            },
+            reconnect: function() {
+                if (this.sock) {
+                    this.sock.close();
+                }
+                this.timeout = null;
+                this.connect({ taskId: this.taskId, connectComplete: this.connectComplete});
+            },
+            onopen: function() {
+                api.log(this.taskId, 'WEB SOCKET', 'OPENED');
+                if (this.connectComplete) this.connectComplete();
+            },
+            onmessage: function(e) {
+                var data = $.parseJSON(e.data);
+                api.log(this.taskId, 'WEB SOCKET DATA IN', data);
+                if (data.error) {
+                    if (data.error.code == 401) {
+                        // window.location.assign("/app_dev.php/login/");
+                    }
+                } else {
+                    $.each(api.websocket.listeners, function(){
+                        this(data);
+                    });
+                }
+            },
+            onclose: function() {
+                api.log(this.taskId, 'WEB SOCKET', 'CLOSED TRYING TO RECONNECT');
+                this.init();
+            },
+            onheartbeat: function() {
+                this.sock.send('h');
+                this.setHeartbeatTimeout();
+            },
+            listeners: [],
+            listenerAdd: function(listener){
+                taskId = this.taskId;
+                api.websocket.listeners.push(listener);
+            }
+        },
+
+        log: function(taskId, title, text, data){
+            console.log(taskId, title, text);
+            if (data!=undefined)
+                console.table(data);
+        },
+
+        dialog: {
+
+            loadGuid: 0,
+
+            load: function(par){
+                par.method = par.method==undefined ? 'get' : par.method;
+                api.log(par.taskId, 'LOAD URL', 'URL: '+par.url+' METHOD: '+par.method);
+                var ajax = {
+                    complete: function(result){
+                        if (result.guid!=undefined)
+                            api.dialog.loadGuid = result.guid;
+                        if ((result.status>=200 && result.status<400) || result.status==409){
+                            api.log(this.taskId, 'LOAD URL SUCCESS', 'URL: '+this.url+' METHOD: '+this.method+' STATUS: '+result.status);
+                            if (this.loadComplete) this.loadComplete(result.responseJSON, result.status, result);
+                        } else {
+                            api.log(this.taskId, 'LOAD URL ERROR', 'URL: '+this.url+' METHOD: '+this.method+' STATUS: '+result.status, result.responseJSON);
+                        }
+                    }
+                };
+                $.ajax($.extend(par, ajax));
+            },
+
+
+            //GET MESSAGES
+            messagesLoad: function(par){
+                api.log(par.taskId, 'MESSAGES LOAD', 'DIALOG ID '+par.dialog.id+(par.pageId!=undefined ? ' PAGE '+par.pageId : ''));
+                var options = {
+                    loadComplete: function(messages, status, xhr){
+                        header = xhr.getAllResponseHeaders();
+                        header = header.substring(header.indexOf('Link:'), header.length);
+                        header = header.substring(0, header.lastIndexOf('>; rel="current"'));
+                        header = header.split(';');
+                        header = header[header.length-1];
+                        page = header.substring(header.lastIndexOf('?page=')+6, header.length);
+
+                        api.log(this.taskId, 'MESSAGES LOAD SUCCESS', 'DIALOG ID '+this.dialog.id+' MESSAGES FOUND '+messages.length);
+                        if (this.messagesLoadComplete) this.messagesLoadComplete(messages);
+
+                        page = page.length==0 ? 1 : page ;
+                        this.messagesView.attr({'data-first-page': page});
+                        this.messagesView.removeAttr('data-loading');
+                        if (this.pageId==undefined && page>1){
+                            var par = this;
+                            par = $.extend({ pageId:page-1 }, par);
+                            api.dialog.messagesLoad(par);
+                        }
+                    }
+                };
+
+                par.messagesView.attr({'data-loading': true});
+                if (par.pageId!=undefined){
+                    options = $.extend({ url: '/app_dev.php/api/dialog/'+par.dialog.id+'/messages/?page='+par.pageId }, options);
+                } else {
+                    options = $.extend({ url: '/app_dev.php/api/dialog/'+par.dialog.id+'/messages/' }, options);
+                }
+
+                api.dialog.load($.extend(par, options));
+            },
+
+
+            //INSERT MESSAGE
+            messageInsert: function(par){
+                var options = {
+                    userId: par.message.user.id,
+                    userLoadComplete: function(user){
+                        if (this.messagesView[0]==undefined){
+                            api.log(this.taskId, 'MESSAGE INSERT. VIEW FIND ERROR', this.message);
+                        } else if (this.messagesView.children('li[data-message='+this.message.id+']')[0]!=null){
+                            api.log(this.taskId, 'MESSAGE INSERT. MESSAGE EXIST', this.message);
+                        } else {
+                            this.messagesView.find('.clear').css({'display':'none'});
+                            var status = 'new';
+                            var r = 0;
+
+                            if (this.message.statuses!=undefined)
+                                if (this.message.statuses.length>0){
+                                    for(j=0;j<this.message.statuses.length;j++)
+                                            if (this.message.statuses[j].status=='new')
+                                                r++;
+
+                                    status = r==this.message.statuses.length ? 'new' : 'read';
+                                }
+                            var code =
+                                  '<li data-message="'+this.message.id+'" data-message-status="'+status+'" data-message-user="'+user.id+'">'
+                                +'  <a href="#">'
+                                +'      <img class="img-avatar" src="'+(user.image && user.image.thumbs && user.image.thumbs[0] ? user.image.thumbs[0]. url:'/images/avatar1.jpg')+'">'
+                                +'      <i class="fa fa-circle text-success"></i> '+(user.company!=null ? user.company.service_name:user.car_owner.first_name+' '+user.car_owner.last_name)
+                                +'      <div class="font-w400 text-muted"><small>'+this.message.body+'</small></div>'
+                                +'      <div class="font-w400 text-muted"><small class="text-muted" data-date="'+this.message.created_timestamp+'">'+api.dialog.date(this.message.created_timestamp)+'</small></div>'
+                                +'  </a>'
+                                +'</li>';
+
+                            this.messagesView.append(code);
+
+                            var liContents = [];
+                            $.each(this.messagesView.children('li'), function() {
+                                liContents.push($(this).data("message"));
+                            });
+                            liContents.sort(function(a, b) {
+                              return a>b ? 1 : -1;
+                            });
+                            var messagesView = this.messagesView;
+                            liContents.forEach(function(item){
+                                messagesView.children('li[data-message='+item+']').appendTo(messagesView);
+                            });
+                            if (this.messageInsertComplete) this.messageInsertComplete();
+                        }
+                    }
+                };
+                api.dialog.userLoad($.extend(options, par));
+
+            },
+
+            users: [],
+
+            userLoad: function(par){
+                api.log(par.taskId, 'USER LOAD', par.userId);
+                var user = api.dialog.users[par.userId];
+                if (api.dialog.users[par.userId]==null){
+                    var options = {
+                        url: '/app_dev.php/api/profile/'+par.userId,
+                        loadComplete: function(user){
+                            api.dialog.users[user.id] = user;
+                            api.log(this.taskId, 'USER LOAD SUCCESS', user);
+                            if (this.userLoadComplete) this.userLoadComplete(user);
+                        }
+                    };
+                    api.dialog.load($.extend(options, par));
+                } else {
+                    api.log(par.taskId, 'USER ALREADY LOADED', user);
+                    if (par.userLoadComplete) par.userLoadComplete(user);
+                }
+            },
+
+            dialogsLoad: function(par){
+                api.log(par.taskId, 'DIALOGS LOAD', 'ENTITY '+(par.relatedEntity!=undefined ? par.relatedEntity : 'NOT SET'));
+                var options = {
+                    url: '/app_dev.php/api/dialogs/?detailedOutput=true'+(par.relatedEntity!=undefined ? '&entity='+par.relatedEntity : ''),
+                    loadComplete: function(dialogs){
+                        api.log(this.taskId, 'DIALOGS LOAD SUCCESS', dialogs);
+
+                        if (this.dialogsLoadComplete) this.dialogsLoadComplete(dialogs);
+                    }
+                };
+                api.dialog.load($.extend(options, par));
+            },
+
+            messagesOpenComplete: null,
+
+            messagesOpen: function(par){
+                $.each(par.messagesView.children('li'), function(){
+                        if ($(this).data('message-status')=='new' && $(this).data('message-user')!=par.user.id){
+                            api.log(par.taskId, 'MESSAGES OPEN', 'MESSAGE ID '+$(this).data('message'));
+                            var options = {
+                                url: '/app_dev.php/api/message/'+$(this).data('message')+'/status/',
+                                messageId: $(this).attr('data-message'),
+                                method: 'put',
+                                data:  { messageStatus: { status:'read' } },
+                                taskId: par.taskId,
+                                loadComplete: function(data){
+                                    api.log(this.taskId, 'MESSAGES OPEN SUCCESS ', 'MESSAGE ID '+this.messageId);
+                                    $('li[data-message='+this.messageId+']').attr({'data-message-status':'read'});
+                                    if (this.messageOpenComplete) this.messageOpenComplete(data);
+                                    if (api.dialog.messagesOpenComplete) api.dialog.messagesOpenComplete(this, data);
+                                }
+                            };
+                            api.dialog.load($.extend(options, par));
+                        }
+                });
+            },
+
+            //SEND MESSAGE
+            messageSend: function(par){
+                api.log(par.taskId, 'SEND MESSAGE', 'DIALOG '+par.dialog.id+' BODY '+par.message.body);
+                if (par.message.body.length>4 && par.message.body.length<200){
+                    par = $.extend({ sendMessage: $.extend({}, par.message) }, par);
+                    delete par.sendMessage.user;
+                    delete par.sendMessage.created_timestamp;
+                    par.sendMessage = $.extend({ guid: api.dialog.loadGuid }, par.sendMessage);
+                    par.sendMessage = { message: par.sendMessage };
+                    var options = {
+                        url: '/app_dev.php/api/dialog/'+par.dialog.id+'/messages/',
+                        method: 'post',
+                        data: par.sendMessage,
+                        taskId: par.taskId,
+                        loadComplete: function(message){
+                            this.message = $.extend(message, this.message);
+                            api.log(this.taskId, 'SEND MESSAGE SUCCESS', 'DIALOG '+this.dialog.id+' BODY '+this.message.body);
+                            if (this.messageSendComplete) this.messageSendComplete(this.message);
+                        }
+                    };
+                    api.dialog.load($.extend(options, par));
+                } else {
+                    api.log(par.taskId, 'SEND MESSAGE ERROR VALIDATION', 'DIALOG '+par.dialog.id+' BODY '+par.message.body);
+                }
+            },
+
+            //CREATE DIALOG
+
+            dialogCreate: function(par){
+                api.log(par.taskId, 'CREATE DIALOG', 'USER: '+par.userId+' COMPANION: '+par.companionId+' ENTITY: '+par.relatedEntity+' ENTITY ID: '+par.relatedEntityId);
+                var options = {
+                    url: '/app_dev.php/api/dialogs/',
+                    method: 'post',
+                    data: {'dialog':{'relatedEntity':par.relatedEntity, 'relatedEntityId':par.relatedEntityId, 'participants':[{'user': par.userId }, {'user': par.companionId }]}},
+                    loadComplete: function(dialog){
+                        api.log(this.taskId, 'CREATE DIALOG SUCCESS', 'DIALOG ID '+dialog.id+' USER: '+this.userId+' COMPANION: '+this.companionId+' ENTITY: '+this.relatedEntity+' ENTITY ID: '+this.relatedEntityId);
+                        this.dialogView.attr('data-dialog',dialog.id);
+                        dialog.participants.forEach(function(el){
+                            api.dialog.users[el.user.id] = el.user;
+                        });
+                        if (this.dialogCreateComplete) this.dialogCreateComplete(dialog);
+                    }
+                };
+                api.dialog.load($.extend(options, par));
+            },
+
+
+            //DATE
+            date: function(str){
+                if (str==null || str=='null')
+                    return '';
+
+                var n = new Date();
+                var d = new Date(str);
+
+                min = d.getMinutes()<10 ? "0"+d.getMinutes() : d.getMinutes();
+
+                monthNames = [
+                    '{{'date.month.nominative.january'|trans}}',
+                    '{{'date.month.nominative.february'|trans}}',
+                    '{{'date.month.nominative.march'|trans}}',
+                    '{{'date.month.nominative.april'|trans}}',
+                    '{{'date.month.nominative.may'|trans}}',
+                    '{{'date.month.nominative.june'|trans}}',
+                    '{{'date.month.nominative.july'|trans}}',
+                    '{{'date.month.nominative.august'|trans}}',
+                    '{{'date.month.nominative.september'|trans}}',
+                    '{{'date.month.nominative.october'|trans}}',
+                    '{{'date.month.nominative.november'|trans}}',
+                    '{{'date.month.nominative.december'|trans}}'
+                ];
+
+                out = d.getDate()+' '+monthNames[d.getMonth()]+' '+d.getFullYear()+' '+d.getHours()+':'+min;
+                if (n.getFullYear()==d.getFullYear())
+                    out = d.getDate()+' '+monthNames[d.getMonth()]+' '+d.getHours()+':'+min;
+                if (n.getFullYear()==d.getFullYear() && d.getMonth()==n.getMonth() && n.getDate()-d.getDate()==1)
+                    out = 'вчера в 00'.replace('00', d.getHours()+":"+min);
+                if (n.getFullYear()==d.getFullYear() && d.getMonth()==n.getMonth() && n.getDate()-d.getDate()==0)
+                    out = '00 час назад'.replace('00', n.getHours()-d.getHours());
+                if (n.getFullYear()==d.getFullYear() && d.getMonth()==n.getMonth() && n.getDate()-d.getDate()==0 && n.getHours()-d.getHours()==0)
+                    out = '00 минут назад'.replace('00', n.getMinutes()-d.getMinutes());
+                if (n.getFullYear()==d.getFullYear() && d.getMonth()==n.getMonth() && n.getDate()-d.getDate()==0 && n.getHours()-d.getHours()==0 && n.getMinutes()-d.getMinutes()==0)
+                    out = '{{'date.now'|trans}}';
+
+                return out;
+            },
+
+
+            loadBlock: function(par){
+                api.log(par.taskId, 'LOAD BLOCK', 'URL :'+par.url);
+                var options = {
+                    method: 'get',
+                    loadComplete: function(data, status, result){
+                        api.log(this.taskId, 'LOAD BLOCK SUCCESS');
+                        if (this.loadBlockComplete) this.loadBlockComplete(data, status, result);
+                    }
+                };
+                api.dialog.load($.extend(options, par));
+            }
+
+        }
+    };
+
+
+
+    api.dialog.messagesOpenComplete = function(_this){
+        var el = $('.dialogs_list .dialog_open[data-dialog='+_this.dialog.id+'] .unread_count');
+        var uc = el.text();
+        uc = parseInt(uc)-1;
+        if (uc==0)
+            el.addClass('hide');
+        else
+            el.removeClass('hide');
+        el.text(uc);
+
+        el = $('.unread_count[data-dialog='+_this.dialog.id+']');
+        if (uc==0)
+            el.addClass('hide');
+        else
+            el.removeClass('hide');
+        el.text(uc);
+    };
+
+
+    var listener = function(data){
+        if (data.message!=undefined){
+            api.dialog.messageInsert({
+                dialog: data.message.dialog,
+                message: data.message,
+                messagesView: $('.dialog[data-dialog='+data.message.dialog.id+']').find('.messages'),
+                taskId: this.taskId,
+                messageInsertComplete: function(){
+                    var h = 0;
+                    this.messagesView.children('li').each(function(){ h +=$(this).outerHeight(); });
+                    this.messagesView.scrollTop(h);
+
+                    if (this.messagesView.closest('.dialog').hasClass('open'))
+                        api.dialog.messagesOpen({
+                            dialog: this.dialog,
+                            user: { id: {% if app.user %}{{app.user.id}}}{% endif %},
+                            messagesView: this.messagesView,
+                            taskId: this.taskId
+                        });
+                    var dialog_open = $('.dialogs_list .dialog_open[data-dialog='+data.message.dialog.id+']');
+                    dialog_open.find('.last_message').text(data.message.body);
+                    dialog_open.find('div[data-date]')
+                        .attr({'data-date':data.message.created_timestamp})
+                        .text(api.dialog.date(data.message.created_timestamp));
+
+                    var el = dialog_open.find('.unread_count');
+                    el.removeClass('hide');
+                    el.text(parseInt(el.text())+1);
+
+                    el = $('.unread_count[data-dialog='+data.message.dialog.id+']');
+                    el.removeClass('hide');
+                    el.text(parseInt(el.text())+1);
+                }
+            });
+
+            var el = $('.dialog[data-dialog='+data.message.dialog.id+'] .block[data-url]');
+            if (el[0]!=undefined){
+                api.dialog.loadBlock({
+                    url: el.data('url'),
+                    blockView: el,
+                    taskId: this.taskId,
+                    loadBlockComplete: function(data, status, result){
+                        this.blockView.html(result.responseText);
+                    }
+                });
+            }
+        } else if (data.messageStatus!=undefined){
+            $('li[data-message='+data.messageStatus.message.id+']').attr({'data-message-status':'read'});
+        }
+    };
+
+    api.websocket.connect({
+        taskId: Math.floor(Math.random()*100),
+        host: "http://" + window.location.hostname + ":5550",
+        connectComplete: function(){
+            //DIALOG LISTENER
+            api.websocket.listenerAdd(listener);
+        }
+    });
+
+
+
+
+    //SETTINGS
+    $.each($('.dialog'), function(){
+        $(this).addClass('block-opt-refresh');
+        api.dialog.dialogCreate({
+            relatedEntity: $(this).data('related-entity-name'),
+            relatedEntityId: $(this).data('related-entity'),
+            userId: {% if app.user %}{{app.user.id}}{% endif %},
+            companionId: $(this).data('companion'),
+            dialogView: $(this),
+            taskId: $(this).data('related-entity'),
+            dialogCreateComplete: function(dialog){
+                $('button[data-target=#'+this.relatedEntity+''+this.relatedEntityId+'] span').html((dialog.messages_count!=0 ? '('+dialog.messages_count+')' : '')+' '+(dialog.unread_count>0 ? '+'+dialog.unread_count : '' ));
+                api.dialog.messagesLoad({
+                    dialog: dialog,
+                    dialogView: this.dialogView,
+                    messagesView: this.dialogView.find('.messages'),
+                    taskId: this.taskId,
+                    messagesLoadComplete: function(messages){
+                        var _this = this;
+                        messages.forEach(function(message){
+                            api.dialog.messageInsert({
+                                dialog: _this.dialog,
+                                messagesView: _this.messagesView,
+                                message: message,
+                                taskId: _this.taskId,
+                                messageInsertComplete: function(){
+                                    var h = 0;
+                                    this.messagesView.children('li').each(function(){ h +=$(this).outerHeight(); });
+                                    this.messagesView.scrollTop(h);
+                                }
+                            });
+                        });
+                        this.dialogView.removeClass('block-opt-refresh');
+                        if (this.dialogView.hasClass('open'))
+                            api.dialog.messagesOpen({
+                                dialog: this.dialog,
+                                user: { id: {% if app.user %}{{app.user.id}}}{% endif %},
+                                messagesView: this.messagesView,
+                                taskId: this.taskId
+                            });
+
+                        this.messagesView.on('scroll', function(){
+                            if($(this)[0].scrollTop<100 && $(this)[0].getAttribute("data-loading")==null && $(this)[0].getAttribute("data-first-page")!="1")
+                                api.dialog.messagesLoad({
+                                    pageId: parseInt($(this)[0].getAttribute("data-first-page"))-1,
+                                    dialog: { id: $(this).closest('.dialog').data('dialog') },
+                                    dialogView: $(this).closest('.dialog'),
+                                    messagesView: $(this),
+                                    taskId: $(this).closest('.dialog').data('dialog'),
+                                    messagesLoadComplete: function(messages){
+                                        var _this = this;
+                                        var scroll = 0;
+                                        this.messagesView.children('li').each(function(){ scroll +=$(this).outerHeight(); });
+                                        messages.forEach(function(message){
+                                            api.dialog.messageInsert({
+                                                dialog: _this.dialog,
+                                                messagesView: _this.messagesView,
+                                                message: message,
+                                                taskId: _this.taskId,
+                                                messageViewScrollTop: scroll-_this.messagesView[0].scrollTop,
+                                                messageInsertComplete: function(){
+                                                    var cur = 0;
+                                                    this.messagesView.children('li').each(function(){ cur +=$(this).outerHeight(); });
+                                                    this.messagesView.scrollTop(cur-this.messageViewScrollTop);
+                                                    scroll = cur;
+                                                }
+                                            });
+                                        });
+                                        if (this.dialogView.hasClass('open'))
+                                            api.dialog.messagesOpen({
+                                                dialog: this.dialog,
+                                                user: { id: {% if app.user %}{{app.user.id}}}{% endif %},
+                                                messagesView: this.messagesView,
+                                                taskId: this.taskId
+                                            });
+                                    }
+                                });
+                        });
+                    }
+                });
+            }
+       });
+    });
+
+    $(document).on('click', '.message_send', function(){
+        api.dialog.messageSend({
+            dialog: {id: $(this).closest('.dialog').data('dialog') },
+            messagesView: $(this).parent().children('.messages'),
+            message: { body: $(this).parent().children('textarea').val(), user: { id: {% if app.user %}{{app.user.id}}{% endif %} } },
+            taskId: Math.floor(Math.random()*100),
+            messageSendComplete: function(message){
+                this.messagesView.parent().children('textarea').val('');
+                api.dialog.messageInsert({
+                    dialog: this.dialog,
+                    message: message,
+                    messagesView: this.messagesView,
+                    taskId: this.taskId
+                });
+            }
+        });
+    });
+
+
+   $(".dialog").change(function(){
+        if ($(this).hasClass('open'))
+            api.dialog.messagesOpen({
+                dialog: { id: $(this).data('dialog') },
+                user: { id: {% if app.user %}{{app.user.id}}{% endif %}},
+                messagesView: $(this).find('.messages'),
+                taskId: Math.floor(Math.random()*100)
+            });
+   });
+
+    setInterval(function(){
+        $('div[data-date], span[data-date], small[data-date], a[data-date]').each(function(index, el){
+            $(this).html(api.dialog.date($(this).data('date')));
+        });
+    }, 5000);
+    //}, 60000);
+
+    $('.modal[role=dialog]').on('shown.bs.modal', function(){
+        $(this).find('.dialog').addClass('open');
+        var scroll = 0;
+        $(this).find('.messages').children('li').each(function(){ scroll +=$(this).outerHeight(); });
+        $(this).find('.messages').scrollTop(scroll);
+        api.dialog.messagesOpen({
+            dialog: { id: $(this).find('.dialog').data('dialog') },
+            user: { id: {% if app.user %}{{app.user.id}}{% endif %}},
+            messagesView: $(this).find('.messages'),
+            taskId: Math.floor(Math.random()*100)
+        });
+    });
+
+    $('.modal').on('hiden.bs.modal', function() {
+        $(this).removeClass('open');
+    });
+
+</script>

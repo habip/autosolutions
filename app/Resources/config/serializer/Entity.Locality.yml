@@ -1,0 +1,11 @@
+AppBundle\Entity\Locality:
+  exclusion_policy: ALL
+  properties:
+    id:
+      expose: true
+    name:
+      expose: true
+    areaName:
+      expose: true
+    region: 
+      expose: true

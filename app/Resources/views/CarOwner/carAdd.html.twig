@@ -1,0 +1,8 @@
+{{ form_start(carAddForm) }} 
+{{ form_row(carAddForm.brand, { attr: { 'data-search': path('_search_brand') } } ) }}
+{{ form_row(carAddForm.model, { attr: { 'data-search': path('_search_model'), 'data-related': 'car[brand]', 'data-related-name': 'car_brand' } } ) }}
+{{ form_row(carAddForm.year, { widget_attr: { class: 'form-control input-lg input_year' } }) }}
+{{ form_row(carAddForm.mileage, { widget_attr: { class: 'form-control input-lg input_mileage' } }) }}
+{{ form_row(carAddForm.number, { widget_attr: { class: 'form-control input-lg input_car_number' } }) }}
+{{ form_row(carAddForm.save, { attr: { class: 'btn btn-primary push-20-b' } }) }}
+{{ form_end(carAddForm) }} 

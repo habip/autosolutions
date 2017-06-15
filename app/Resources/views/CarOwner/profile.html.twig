@@ -1,0 +1,480 @@
+{% extends '::newCabinetLayout.html.twig' %}
+
+{% block title %}{{'carOwner.profile'|trans}}{% endblock %}
+{% block head %}
+    {{ parent() }}
+    {% stylesheets
+        '../app/Resources/public/css/jquery.fileupload.css'
+        '../app/Resources/public/css/progress.css'
+        '../app/Resources/public/css/jquery.ui.autocomplete.css'
+        '../app/Resources/public/js/plugins/bootstrap-datepicker/bootstrap-datepicker3.min.css'
+        %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
+{% endblock head %}
+{% block body %}
+
+
+<!-- SubHeader =============================================== -->
+<section class="parallax-window" id="short" data-parallax="scroll" data-image-src="/assets/20170109/img/sub_header_350.jpg" data-natural-width="1400" data-natural-height="350">
+    <div id="subheader">
+    	<div id="sub_content">
+    	 <h1>Мои данные</h1>
+         <p>Укажите свои персональные данные</p>
+         <p></p>
+        </div><!-- End sub_content -->
+	</div><!-- End subheader -->
+</section><!-- End section -->
+<!-- End SubHeader ============================================ -->
+    
+	
+	
+<!-- Content ================================================== -->
+<div class="container margin_60_35">
+		<div class="row">
+
+
+			<div class="col-md-3">
+				<div class="box_style_2 hidden-xs" id="help">
+					{% if app.user.phone is defined %}<h4 class="push-5">+{{app.user.phone.countryCode}}{{app.user.phone.nationalNumber}}</h4>{% endif %}
+                    <h6 class="text-muted push-5-t">{{app.user.email}}</h6>
+					<small>{{app.user.carOwner.firstname}} {{app.user.carOwner.lastname}}</small>
+				</div>			
+			
+            	<!--<p><a href="list_page.html" class="btn_side">Добавить авто</a></p>-->
+				<div class="box_style_1">
+					<ul id="cat_nav" data-toggle="tabs">
+						<li class="active"><a href="#personal">Персональная информация</a></li>
+						<li><a href="#email">Настройки уведомлений</a></li>
+					</ul>
+				</div><!-- End box_style_1 -->
+                
+
+			</div>
+		
+		
+			<div class="col-md-9">
+
+			<div class="">
+
+				<div class="tab-pane active" id="profile">
+			
+					<div class="box_style_2">
+						<h2 class="inner">Персональные данные</h2>
+														{{ form_start(form) }}
+															{{ form_row(form.firstName) }}
+															{{ form_row(form.lastName) }}
+															{{ form_row(form.nickname) }}
+															{{ form_row(form.gender) }}
+															{% if form.birthday is defined %}
+															<div class="form-group{% if form.birthday.vars.errors|length > 0 %} has-error{% endif %}">
+																<label for="birthday" class="col-xs-12">Дата рождения</label>
+																<div class="col-xs-12 form-inline">
+																	{{ form_widget(form.birthday.day, {'attr': {'class': 'form-control'}}) }}
+																	{{ form_widget(form.birthday.month, {'attr': {'class': 'form-control'}}) }}
+																	{{ form_widget(form.birthday.year, {'attr': {'class': 'form-control'}}) }}
+																	{% if form.birthday.vars.errors|length > 0 %}
+																	<span class="help-block">{{ form_errors(form.birthday)}}</span>
+																	{% endif %}
+																</div>
+															</div>
+															{% endif %}
+															{% if carOwner.locality %}{% set locality_id = carOwner.locality.id %}{% else %}{% set locality_id = '' %}{% endif %}
+															{{ form_row(form.locality, { 'attr': { 'data-search' : path('_search_locality'), 'data-value' : locality_id } }) }}
+															{{ form_row(form.save) }}
+														{{ form_end(form) }}					
+						
+						
+
+					</div><!-- End box_style_1 -->
+				</div>
+				<div class="tab-pane fade" id="email">				
+					<div class="box_style_2">
+						<h2 class="inner">Персональные данные</h2>				
+				
+						<h5>Отсылать уведомление о выполнении работы</h5>
+						<div class="form-group">
+							<label>Email</label>
+							<span class="css-input css-checkbox css-checkbox-primary"><input type="checkbox"></span>
+						</div>
+						<div class="form-group">
+							<label>SMS</label>
+							<span class="css-input css-checkbox css-checkbox-primary"><input type="checkbox"></span>
+						</div>
+
+						<hr>                    
+
+						<h5>Отсылать уведомление о выполнении работы</h5>
+						<div class="form-group">
+							<label>Email</label>
+							<span class="css-input css-checkbox css-checkbox-primary"><input type="checkbox"></span>
+						</div>
+						<div class="form-group">
+							<label>SMS</label>
+							<span class="css-input css-checkbox css-checkbox-primary"><input type="checkbox"></span>
+						</div>
+		
+				
+					</div>
+				</div>
+				
+			</div>	
+				
+				
+			</div><!-- End col-md-9-->
+				
+			
+            
+
+            
+		</div><!-- End row -->
+</div><!-- End container -->
+<!-- End Content =============================================== -->
+
+
+			
+    
+
+        <!--
+            <div class="content">
+                <div class="row">
+                    <div class="col-md-12">
+
+                        <div class="block block-themed">
+                            <div class="block-header bg-danger"><h3 class="block-title">Регистрационные данные</h3></div>
+                            <div class="block-content block-content-full">
+                                <div class="form-horizontal push-5-t">
+                                    <div class="form-group">
+                                        <label class="col-xs-12">Ф.И.О.</label>
+                                        <div class="col-xs-12">
+                                            <p style="margin-bottom:0px;">{{carOwner.firstName}} {{carOwner.lastName}}</p>
+                                        </div>
+                                    </div>
+                                    <hr/>
+                                    <div class="form-group">
+                                        <label class="col-xs-12">Ник</label>
+                                        <div class="col-xs-12">
+                                            <p style="margin-bottom:0px;">{{carOwner.nickname}}</p>
+                                        </div>
+                                    </div>
+                                    <hr/>
+                                    <div class="form-group">
+                                        <label class="col-xs-12">Пол</label>
+                                        <div class="col-xs-12">
+                                            <p style="margin-bottom:0px;">{% if carOwner.gender == 'male' %}Мужской{% elseif carOwner.gender == 'female' %}Женский{% else %}Не указано{% endif %}</p>
+                                        </div>
+                                    </div>
+                                    <hr/>
+                                    <div class="form-group">
+                                        <label class="col-xs-12">Дата рождения</label>
+                                        <div class="col-xs-12">
+                                            {% if carOwner.birthday -%}
+                                            <p style="margin-bottom:0px;">{{carOwner.birthday | date('d.m.Y')}}</p>
+                                            {%- endif %}
+                                        </div>
+                                    </div>
+                                    <hr/>
+                                    <div class="form-group">
+                                        <label class="col-xs-12">Город</label>
+                                        <div class="col-xs-12">
+                                            <p style="margin-bottom:0px;">{{carOwner.locality.name}}</p>
+                                        </div>
+                                    </div>
+                                    <hr/>
+                                    <div class="form-group">
+                                        <label class="col-xs-12">Контактный телефон</label>
+                                        <div class="col-xs-12">
+                                            <p style="margin-bottom:0px;">{{carOwner.phone}}</p>
+                                        </div>
+                                    </div>
+                                    <hr/>
+                                    <div class="form-group">
+                                        <div class="col-xs-12">
+                                            <a href="{{path('_car_owner_profile_edit')}}" class="btn btn-danger">Редактировать</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    </div>
+                </div>
+
+    -->
+
+
+
+    <!--                    <div class="col-sm-6">
+
+
+                        <div class="block block-themed _col _col_12">
+                            <div class="block-header bg-primary-dark">
+                                <h3 class="block-title">Мой автомобиль</h3>
+                            </div>
+
+                            <div class="block-content">
+
+
+                                                                    {% for car in cars %}
+                    <div class="block">
+
+                      <div class="block-content">
+
+                        <div class="row">
+                          <div class="col-md-6">
+
+                            <div class="row push-30">
+                              <div class="col-md-12"><h3>{{ car.brand.name }} {{ car.model.name }}</h3></div>
+                            </div>
+
+                            <div class="row">
+                              <div class="col-md-4">Гос.номер</div>
+                              <div class="col-md-6"><strong>{{ car.number }}</strong></div>
+                            </div>
+
+                            <div class="row">
+                              <div class="col-md-4">Год выпуска</div>
+                              <div class="col-md-6"><strong>{{ car.year }}</strong></div>
+                            </div>
+
+                            <div class="row push-60">
+                              <div class="col-md-4">Пробег</div>
+                              <div class="col-md-6"><strong>{{ car.mileage }} км</strong></div>
+                            </div>
+
+
+                          </div>
+                          <div class="col-md-6">
+                            <div class="block-content block-content-full text-center">
+                                <img src="{% if car.images is not empty %}{{ thumb(car.images[0], 275, 155, true) }}{% else %}/img/default_img.jpg{% endif %}">
+                                <p><a href="{{path('_car_owner_requests')}}#car{{car.id}}">Заявки на ремонт автомобиля ({{ car.carOwnerRequests|length }})</a></p>
+                            </div>
+                          </div>
+                            <div class="row">
+                              <div class="col-md-12">
+                                <button class="btn btn-danger" data-toggle="modal" data-target="#modal-car-edit-{{car.id}}" type="button">Редактировать</button>
+                                <a class="btn btn-default" href="{{path('_main')}}?car={{car.id}}">Создать заявку на ремонт</a>
+                              </div>
+                            </div>
+                        </div>
+
+
+
+
+                      </div>
+                    </div>
+
+
+
+
+
+                                            <div class="modal fade car_edit" id="modal-car-edit-{{car.id}}" data-car="{{car.id}}" tabindex="-1" role="dialog" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="block block-themed block-transparent remove-margin-b">
+                                                            <div class="block-header bg-primary-dark">
+                                                                <ul class="block-options">
+                                                                    <li>
+                                                                        <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+                                                                    </li>
+                                                                </ul>
+                                                                <h3 class="block-title">Редактировать автомобиль "{{car.brand.name}} {{car.model.name}}"</h3>
+                                                            </div>
+                                                            <div class="block-content">
+                                                                <div class="form-horizontal">
+                                                                    <div class="form-group">
+                                                                        <label class="col-md-3">Фотография</label>
+                                                                        <div class="col-md-7">
+                                                                            <div class="upload_box">
+                                                                                <img src="{% if car.images is not empty %}{{ thumb(car.images[0], 275, 155, true) }}{% else %}/img/default_img.jpg{% endif %}">
+                                                                                <span class="btn btn-danger fileinput-button">
+                                                                                    <span>Загрузить другое изображение</span>
+                                                                                    <input class="image-upload-button" type="file" name="file" data-url="/app_dev.php/_uploader/image/upload">
+                                                                                </span>
+                                                                                <div class="file_list"></div>
+                                                                                <input type="hidden" name="image" value="{% if car.images is not empty %}{{ car.images[0].id }}{% endif %}">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label class="col-md-3">Марка</label>
+                                                                        <div class="col-md-7">
+                                                                            <input type="text" class="form-control" data-search="/app_dev.php/search/brand" name="brand" value="{{car.brand.name}}" data-value="{{car.brand.id}}">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label class="col-md-3">Модель</label>
+                                                                        <div class="col-md-7">
+                                                                            <input type="text" class="form-control" data-search="/app_dev.php/search/model" name="model" value="{{car.model.name}}" data-related="brand" data-value="{{car.model.id}}">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label class="col-md-3">Год</label>
+                                                                        <div class="col-md-7">
+                                                                            <input type="text" class="form-control _input_year" name="year" value="{{car.year}}">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label class="col-md-3">Пробег</label>
+                                                                        <div class="col-md-7">
+                                                                            <input type="text" class="form-control _input_mileage" name="mileage" value="{{car.mileage}}">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label class="col-md-3">Гос.номер</label>
+                                                                        <div class="col-md-7">
+                                                                            <input type="text" class="form-control _input_car_number" name="number" value="{{car.number}}">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <a class="btn btn-sm btn-primary _new_message_send _save">Сохранить</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <hr/>
+
+                    {% endfor %}
+
+
+                            </div>
+                        </div>-->
+
+
+
+{% endblock %}
+
+{% block js %}
+    {% javascripts
+        '../app/Resources/public/js/jquery.ui.autocomplete.min.js'
+        '../app/Resources/public/js/jquery.ui.localityinput.js'
+        '../app/Resources/public/js/jquery.iframe-transport.js'
+        '../app/Resources/public/js/jquery.fileupload.js'
+        '../app/Resources/public/js/image-upload.js'
+        '../app/Resources/public/js/plugins/bootstrap-datepicker/bootstrap-datepicker.js'
+        '../app/Resources/public/js/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.ru.min.js'
+        %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    <script>
+        $('.car_edit ._save').click(function(event){
+            event.preventDefault();
+            var _modal = $(this).closest('.modal');
+            $.ajax({
+                url: '{{path('_car_owner_car_edit', { id : '00'})}}'.replace('00',_modal.data('car')),
+                type: 'post',
+                data: {
+                    'brand': _modal.find('input[name=brand]').val(),
+                    'model': _modal.find('input[name=model]').val(),
+                    'year': _modal.find('input[name=year]').val(),
+                    'mileage': _modal.find('input[name=mileage]').val(),
+                    'number': _modal.find('input[name=number]').val(),
+                    },
+                success: function(data){
+                    $('.car_edit').modal('hide');
+                    location.reload();
+                }
+            });
+        });
+    </script>
+    <script>
+    $(function () {
+        var box;
+        var uploadProgressBar;
+        var filesCount = 0;
+        var doneFilesCount = 0;
+        var files = [];
+        var cleanup = function() {
+            filesCount = 0;
+            doneFilesCount = 0;
+            files = [];
+        };
+        $('.image-upload-button').fileupload({
+            dataType: 'json',
+            add: function(e, data) {
+                data.formData = {
+                    'car_id': $(this).closest('.car_edit').data('car'),
+                    'type': 'car'
+                };
+                box = $(this).closest('.upload_box');
+                filesCount += data.files.length;
+                files.push(data);
+                data.context =
+                    $('<div class="progress progress-mini">'+
+                        '<div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%"></div>'+
+                       '</div>');
+                box.find('.file_list').html('').append(data.context);
+                data.sizeCell = $('.size', data.context);
+                data.statusCell = $('.upload-status', data.context);
+                data.progressBar = $('.progress .progress-bar', data.context);
+                if (data.autoUpload || (data.autoUpload !== false &&
+                        $(this).fileupload('option', 'autoUpload'))) {
+                    data.process().done(function () {
+                        data.submit();
+                    });
+                }
+            },
+            start: function(e) {
+                $(this).closest('.fileinput-button').css({'display':'none'});
+                uploadProgressBar = $(this).closest('.upload_box').find('.progress-bar');
+                uploadProgressBar.css('width', 0);
+                box.find('.file_list').css({'display':'block'});
+            },
+            progress: function(e, data) {
+                var percent = parseInt(data.loaded / data.total * 100, 10);
+                data.progressBar.css('width', percent + "%").attr('aria-valuenow', percent).find('.sr-only').text(percent + '% Complete');
+                data.sizeCell.html(data.total + "/" + data.loaded + "B");
+            },
+            progressall: function(e, data) {
+                //console.log('progress', e, data);
+                var percent = parseInt(data.loaded / data.total * 100, 10);
+                uploadProgressBar.css('width', percent + "%").attr('aria-valuenow', percent).find('.sr-only').text(percent + '% Complete');
+            },
+            done: function (e, data) {
+                var list = $('.photo-list-content');
+                var imgContainer = $(this).closest('div');
+                var img = imgContainer.find('img');
+                var input = imgContainer.find('input[type="hidden"]');
+                $.each(data.result.files, function (index, file) {
+                    if (!file.error) {
+                        if (input.length) {
+                            input.val(file.id);
+                        } else {
+                            imgContainer.append($('<input type="hidden" name="company_settings[user][image]" value="' + file.id + '">'));
+                        }
+                        if (img.length) {
+                            img.attr('src', file.thumbnailUrl).attr('style', 'background-image:url(' + file.thumbnailUrl + ')');
+                        } else {
+                            imgContainer.append($('<img src="' + file.thumbnailUrl + '" photo="' + file.thumbnailUrl + '" style="background-image:url(' + file.thumbnailUrl + ')" data-id="' + file.id + '"/>'));
+                        }
+                        data.statusCell.html('<span class="glyphicon glyphicon-ok" style="color: #3c763d;"></span>');
+                    } else {
+                        data.statusCell.html('<span style="color: #a94442;">'+file.error+'</span>');
+                    }
+                });
+                doneFilesCount++;
+                if (doneFilesCount == filesCount) {
+                    cleanup();
+                    box.find('.file_list').css({'display':'none'});
+                    $(this).closest('.fileinput-button').css({'display':'block'});
+                }
+            },
+            fail: function(e, data) {
+                doneFilesCount++;
+                data.statusCell.html('<span style="color: #a94442;">'+data.errorThrown+'</span>');
+                if (doneFilesCount == filesCount) {
+                    cleanup();
+                }
+            },
+            stop: function(e) {
+                cleanup();
+            }
+        });
+    });
+    </script>
+{% endblock %}

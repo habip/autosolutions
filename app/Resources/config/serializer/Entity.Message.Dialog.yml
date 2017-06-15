@@ -1,0 +1,32 @@
+AppBundle\Entity\Message\Dialog:
+  exclusion_policy: ALL
+  properties:
+    id:
+      expose: true
+    relatedEntity:
+      expose: true
+      groups: [dialog]
+    relatedEntityId:
+      expose: true
+      groups: [dialog]
+    extensible:
+      expose: true
+      groups: [dialog]
+    user:
+      expose: true
+      groups: [dialog]
+    creationTimestamp:
+      expose: true
+      groups: [dialog]
+    participants:
+      expose: true
+      groups: [participants]
+    lastMessage:
+      expose: true
+      groups: [last_message]
+    messagesCount:
+      expose: true
+  virtual_properties:
+    getUnreadCount:
+      serialized_name: unread_count
+      

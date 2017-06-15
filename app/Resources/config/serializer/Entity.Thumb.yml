@@ -1,0 +1,14 @@
+AppBundle\Entity\Thumb:
+  exclusion_policy: ALL
+  properties:
+    url:
+      expose: true
+    width:
+      expose: true
+    height:
+      expose: true
+    isCropped:
+      expose: true
+    isAspectRatioPreserved:
+      expose: true
+      

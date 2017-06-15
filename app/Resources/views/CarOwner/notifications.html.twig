@@ -1,0 +1,47 @@
+{% extends '::mainLayout.html.twig' %}
+{% block title %}История оповещений{% endblock %}
+{% block body %}
+
+        {{ include(':Components:title.html.twig', { title: 'История оповещений' }) }}
+        <div class="_new_tabs_content _p_t_20 _t_a_c">
+            <div class="block block-themed fix_bootstrap">
+                <div class="row push-20-t">
+                    <div class="col-md-12" id="notification_history">
+                        <ul class="list list-timeline pull-t text-left list-timeline push-20-l push-20-r">
+                        {% for notification in notifications %}
+                            <li>
+                                <div class="list-timeline-time">{{notification.createdTimestamp|date('d.m.y H:m')}}</div>
+                                <div class="list-timeline-content notification" data-notification="{{notification.id}}">
+                                    <i class="fa list-timeline-icon
+                                    {% if notification.request.status=='new' %}
+                                    fa-refresh bg-warning
+                                    {% elseif notification.request.status=='assign' or notification.request.status=='reassign' %}
+                                    fa-clock-o bg-success
+                                    {% elseif notification.request.status=='inprogress' %}
+                                    fa-cogs bg-primary
+                                    {% elseif notification.request.status=='rejected' or notification.request.status=='canceled' or notification.request.status=='timeout' %}
+                                    fa-close bg-danger
+                                    {% elseif notification.request.status=='done'%}
+                                    fa-check bg-success
+                                    {% endif %}"></i>
+                                    <div class="row">
+                                        <div class="col-md-10">
+                                            <h4 class="h5 font-w600"><a href="{{path('_car_owner_request', { id : notification.request.id})}}">Заявка №{{notification.request.id}}</a></h4>
+                                            <div class="font-s13 push-10-t push-20">{{notification.message}}</div>
+                                                <a href="{{path('_car_owner_request', { id : notification.request.id})}}" class="btn btn-info push-5-r push-10 text-white">Заявка подробнее</a>
+                                        </div>
+                                        <div class="col-md-2">
+                                            {% if notification.status=='new' %}<div class="btn close"><i class="fa fa-close"></i></div>{% endif %}
+                                        </div>
+                                    </div>
+                                    <hr>
+                                </div>
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+{% endblock %}

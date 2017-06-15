@@ -1,0 +1,321 @@
+{% extends '::newCabinetLayout.html.twig' %}
+
+
+{% macro status_icon(status) %}
+    {% if status == 'new' %}
+    <i class="fa fa-rocket list-timeline-icon bg-success"></i>
+    {% elseif status == 'inprogress' %}
+    <i class="fa fa-refresh fa-spin list-timeline-icon bg-primary"></i>
+    {% elseif status == 'assign' %}
+    <i class="fa fa-clock-o list-timeline-icon bg-primary"></i>
+    {% elseif status == 'reassign' %}
+    <i class="fa fa-refresh fa-spin list-timeline-icon bg-warning"></i>
+    {% elseif status == 'canceled' %}
+    <i class="fa fa-times list-timeline-icon bg-danger"></i>
+    {% elseif status == 'rejected' %}
+    <i class="fa fa-times list-timeline-icon bg-danger"></i>
+    {% elseif status == 'timeout' %}
+    <i class="fa fa-clock-o list-timeline-icon bg-warning"></i>
+    {% elseif status == 'done' %}
+    <i class="fa fa-check list-timeline-icon bg-success"></i>
+    {% endif %}
+{% endmacro %}
+
+{% macro status_label(status) %}
+    {% if status == 'new' %}
+    <div class="label label-success">новая</div>
+    {% elseif status == 'inprogress' %}
+    <div class="label label-primary">в работе</div>
+    {% elseif status == 'assign' %}
+    <div class="label label-primary">назначено</div>
+    {% elseif status == 'reassign' %}
+    <div class="label label-warning">переназначено</div>
+    {% elseif status == 'canceled' %}
+    <div class="label label-danger">отменено</div>
+    {% elseif status == 'rejected' %}
+    <div class="label label-danger">отклонено</div>
+    {% elseif status == 'timeout' %}
+    <div class="label label-warning">истекло</div>
+    {% elseif status == 'done' %}
+    <div class="label label-success">выполнено</div>
+    {% endif %}
+{% endmacro %}
+
+{% macro carOwnerRequestRender(serviceRepo, carOwnerRequests, filter) %}
+    {% import _self as request %}
+    {% set car = null %}
+    {% set countN = 0 %}
+    {% set title = false %}
+    
+    {% for carOwnerRequest in carOwnerRequests %}
+        {% if carOwnerRequest.status in filter or carOwnerRequest.status==filter or filter is null %}
+            {% set countN=countN+1 %}
+            {% if car != carOwnerRequest.car %}
+
+            <div class="push-10-b">
+            <span class="h2">{{carOwnerRequest.car.brand.name}} {{carOwnerRequest.car.model.name}}</span>
+            <span class="push-10-l">{{carOwnerRequest.car.number|slice(0,-3)}} {{carOwnerRequest.car.number|slice(-3,3)}}</span>
+            </div>
+
+            {% endif %}
+            {% set car = carOwnerRequest.car %}
+
+            <div class="strip_list">
+                <div class="row cart-list">
+                    <div class="col-md-7 col-sm-9">
+                        <div class="desc">
+                            <div class="date-strip">
+                                {{ request.status_label(carOwnerRequest.status) }}
+                                {% if carOwnerRequest.status=='canceled' or carOwnerRequest.status=='timeout' or carOwnerRequest.status=='rejected' %}
+                                {% set isMuted = true %}
+                                {%else %}
+                                {% set isMuted = false %}
+                                {%endif %}
+                                <h5{% if isMuted %} class="text-muted"{% endif %}>на {{carOwnerRequest.carOwnerDate|date('d.m.y')}}</h5>
+                                <h2{% if isMuted %} class="text-muted"{% endif %}>{{carOwnerRequest.carOwnerDate|date('H:i')}}</h2>
+                            </div>
+                            <div class="rating">
+                                (<small>от {{carOwnerRequest.addedTimestamp|date('d.m.y H:i')}}</small>)
+                            </div>
+                            <a href="{{ path('_car_owner_request', {id: carOwnerRequest.id}) }}" class="add_to_basket"><h3>Заявка #{{carOwnerRequest.id}}</h3></a>
+                            <div class="type">
+                                <h5>{% if carOwnerRequest.reasons is not empty %}{{carOwnerRequest.reasons[0].name}} в {% endif %}<a href="#" data-role="carservice-link" data-carservice-id="{{ carOwnerRequest.carService.id }}">{{carOwnerRequest.carService.name}}</a></h5>
+                            </div>
+
+                            <ul>
+                            {% for serviceCost in serviceRepo.findServicesCostMin(carOwnerRequest.services, carOwnerRequest.carService, carOwnerRequest.car.model) %}
+                                <li>{{ serviceCost.service.name }} {% if serviceCost.costCount > 0 %}от {% endif %}{{ serviceCost.minCost }}р <i class="icon_check_alt2 ok"></i></li>
+                            {% endfor %}
+                            </ul>
+
+                        </div>
+                    </div>
+                    <div class="col-md-5 col-sm-3">
+                            <div class="options text-right">
+                                {% if carOwnerRequest.status=='done' and not carOwnerRequest.review %}
+                                <a href="#" class="btn_1 review-btn" data-request-id="{{ carOwnerRequest.id }}">Оставить отзыв</a>
+                                {% endif %}
+                                <a href="#" data-request-id="{{ carOwnerRequest.id }}" data-url="{{ path('_cancel_car_owner_request', {id: carOwnerRequest.id}) }}" class="btn_listing cancel-request-btn"><i class="icon-cancel ok"></i></a>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+    {% if countN==0 %}
+        <div class="block block-themed">
+            <div class="block-header text-center">
+                <h3>Нет заявок</h3>
+            </div>
+        </div>
+    {% endif %}
+
+{% endmacro %}
+
+
+{% block title %}Мои Заявки{% endblock %}
+{% block body %}
+    <!--{{ include(':Components:title.html.twig', { title: 'Мои Заявки' }) }}-->
+    {% import _self as request %}
+
+
+
+<!-- SubHeader =============================================== -->
+<section class="parallax-window" id="short" data-parallax="scroll" data-image-src="/assets/20170109/img/sub_header_350.jpg" data-natural-width="1400" data-natural-height="350">
+    <div id="subheader">
+        <div id="sub_content">
+         <h1>Мои заявки</h1>
+         <p>Список текущих заявок.</p>
+         <p></p>
+        </div><!-- End sub_content -->
+    </div><!-- End subheader -->
+</section><!-- End section -->
+<!-- End SubHeader ============================================ -->
+
+
+
+
+<!-- Content ================================================== -->
+<div class="container margin_60_35">
+        <div class="row">
+
+
+            <div class="col-md-3">
+                <p><a href="{{ path('_search_service') }}" class="btn_side">Подать заявку</a></p>
+                <div class="box_style_1">
+                    <ul id="cat_nav" data-toggle="tabs">
+                        <li>
+                            <a data-toggle="tab" href="#request_all" class="active">Все ({{carOwnerRequests|length}})</a>
+                        </li>
+                        <li>
+                            {% set count1 = 0 %}
+                            {% for carOwnerRequest in carOwnerRequests %}
+                                {% if carOwnerRequest.status == 'new' %}
+                                    {% set count1=count1+1 %}
+                                {% endif %}
+                            {% endfor %}
+                            <a data-toggle="tab" href="#request_new">Новые ({{count1}})</a>
+                        </li>
+                        <li>
+                            {% set count2 = 0 %}
+                            {% for carOwnerRequest in carOwnerRequests %}
+                                {% if carOwnerRequest.status == 'done'  %}
+                                    {% set count2=count2+1 %}
+                                {% endif %}
+                            {% endfor %}
+                            <a data-toggle="tab" href="#request_done">Выполненные ({{count2}})</a>
+                        </li>
+                        <li>
+                            {% set count3 = 0 %}
+                            {% for carOwnerRequest in carOwnerRequests %}
+                                {% if carOwnerRequest.status == 'timeout' or  carOwnerRequest.status == 'rejected' or  carOwnerRequest.status == 'canceled' %}
+                                    {% set count3=count3+1 %}
+                                {% endif %}
+                            {% endfor %}
+                            <a data-toggle="tab" href="#request_cancel">Отмененные ({{count3}})</a>
+                        </li>
+                    </ul>
+                </div><!-- End box_style_1 -->
+
+                <div class="box_style_2 hidden-xs" id="help">
+                    <i class="icon_lifesaver"></i>
+                    <h4>Нужна <span>Помощь?</span></h4>
+                    <a href="tel://004542344599" class="phone">(843) 20-20-250</a>
+                    <small>Круглосуточно</small>
+                </div>
+            </div>
+
+
+        <div class="col-md-9">
+
+            <div id="tools" class="hide">
+                    <div class="row">
+                        <div class="col-md-3 col-sm-3 col-xs-6">
+                            <div class="styled-select">
+                                <select onchange=document.location=this.options[this.selectedIndex].value>
+                                    <option>Сортировать</option>
+                                    <option value="{{path('_car_owner_requests')}}">По дате создания</option>
+                                    <option{% if app.request.get('sortByCar') %} selected="selected"{% endif %} value="{{path('_car_owner_requests', { sortByCar: true })}}">По автомобилю</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-9 col-sm-9 hidden-xs">
+                            <a href="grid_list.html" class="bt_filters"><i class="icon-th"></i></a>
+                        </div>
+                    </div>
+                </div><!--End tools -->
+
+                <div class="tab-content">
+                    <div id="request_all" class="tab-pane fade in active">
+                        {{request.carOwnerRequestRender(serviceRepo, carOwnerRequests, null)}}
+                    </div>
+                    <div id="request_new" class="tab-pane fade">
+                        {{request.carOwnerRequestRender(serviceRepo, carOwnerRequests, 'new')}}
+                    </div>
+                    <div id="request_done" class="tab-pane fade">
+                        {{request.carOwnerRequestRender(serviceRepo, carOwnerRequests, 'done')}}
+                    </div>
+                    <div id="request_cancel" class="tab-pane fade">
+                        {{request.carOwnerRequestRender(serviceRepo, carOwnerRequests, ['timeout', 'rejected', 'canceled'])}}
+                    </div>
+                </div>
+        </div>
+	</div>
+</div>
+
+    {% for carOwnerRequest in carOwnerRequests %}
+    <div class="modal fade in" id="CarOwnerRequest{{carOwnerRequest.id}}" tabindex="-1" role="dialog" aria-hidden="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="block block-themed block-opt-refresh-icon6 dialog" data-related-entity-name="CarOwnerRequest" data-related-entity="{{carOwnerRequest.id}}" data-companion="{{carOwnerRequest.carService.company.user.id}}">
+                        <div class="block-header bg-primary-dark">
+                        <ul class="block-options">
+                            <li>
+                                <button data-dismiss="modal" type="button" class="modal_close">x</button>
+                            </li>
+                        </ul>
+                        <h3 class="block-title">#{{carOwnerRequest.id}} от {{carOwnerRequest.addedTimestamp|date('d.m.y H:i')}}</h3>
+                        </div>
+                    <div class="block-content">
+                        <ul class="nav-users messages push-10">
+                        </ul>
+                        <textarea class="form-control push-10" rows="4" placeholder="Введите текст сообщения..."></textarea>
+                        <a class="btn btn-success push-10 message_send">Отправить</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <div class="modal fade in" id="cancel-request-confirm" tabindex="-1" role="dialog" aria-hidden="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="block block-themed">
+                    <div class="block-content">
+                        <h3 class="push-10">Вы действительно хотите отменить заявку?</h3>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn btn-default modal_close push-10">Нет</a>
+                        <a class="btn btn-success push-10 confirm">Отменить</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade in" id="carservice" tabindex="-1" role="dialog" aria-hidden="false">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="block block-themed block-split-header">
+                    <div class="block-content min-h-250">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+    <script>
+    $(function() {
+        $('.cancel-request-btn').click(function(event) {
+            event.preventDefault();
+            var $this = $(this),
+            url = $this.data('url');
+
+            $('#cancel-request-confirm').modal('show');
+
+
+
+            $('#cancel-request-confirm .modal_close').off().on('click', function(event) {
+                $('#cancel-request-confirm').modal('hide');
+            });
+
+            $('#cancel-request-confirm .confirm').off().on('click', function(event) {
+                event.preventDefault();
+                window.location = url;
+            });
+        });
+
+        $('[data-role=carservice-link]').click(function(event) {
+            var _this = $(this),
+            content = $('#carservice .block-content'),
+            modal = $('#carservice');
+
+            event.preventDefault();
+            var showUrl = '{{path('_search_carservice')}}?id=00&view=true'.replace('00', _this.data('carservice-id'));
+            $.ajax({
+                url: showUrl,
+                success: function(data){
+                    content.html(data);
+                    modal.modal('show');
+                    content.removeClass('opt-refresh');
+                }
+            });
+        });
+    });
+    </script>
+{% endblock %}

@@ -1,0 +1,36 @@
+AppBundle\Entity\User:
+  exclusion_policy: ALL
+  properties:
+    id:
+      expose: true
+    email:
+      expose: true
+      groups: [self,admin]
+      serialized_name: email
+    phone:
+      expose: true
+    type:
+      expose: true
+    company:
+      expose: true
+      groups: [profile,admin]
+    carOwner:
+      expose: true
+      groups: [profile,admin]
+    employee:
+      expose: true
+      groups: [profile,admin]
+    isOnline:
+      expose: true
+    lastVisit:
+      expose: true
+    registrationDate:
+      expose: true
+      groups: [admin]
+    isActive:
+      expose: true
+      groups: [admin]
+    blocked:
+      expose: true
+      groups: [admin]
+      

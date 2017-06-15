@@ -1,0 +1,29 @@
+AppBundle\Entity\Message\Message:
+  exclusion_policy: ALL
+  properties:
+    id:
+      expose: true
+    guid:
+      expose: true
+      groups: [message]
+    body:
+      expose: true
+      groups: [message]
+    createdTimestamp:
+      expose: true
+      groups: [message]
+    user:
+      expose: true
+      groups: [message]
+    dialog:
+      expose: true
+      groups: [message,detailed,dialog]
+    statuses:
+      expose: true
+      groups: [detailed,statuses]
+    attachments:
+      expose: true
+      groups: [detailed,attachments]
+    stateId:
+      expose: true
+    

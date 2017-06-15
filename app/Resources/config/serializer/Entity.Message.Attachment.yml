@@ -1,0 +1,6 @@
+AppBundle\Entity\Message\Attachment:
+  exclusion_policy: ALL
+  properties:
+    TYPE:
+      expose: true
+      serialized_name: type

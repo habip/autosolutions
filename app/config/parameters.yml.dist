@@ -1,0 +1,34 @@
+# This file is a "template" of what your parameters.yml file should look like
+# Set parameters here that may be different on each deployment target of the app, e.g. development, staging, production.
+# http://symfony.com/doc/current/best_practices/configuration.html#infrastructure-related-configuration
+parameters:
+    database_host:     127.0.0.1
+    database_port:     ~
+    database_name:     symfony
+    database_user:     root
+    database_password: ~
+    # You should uncomment this if you want use pdo_sqlite
+    # database_path: "%kernel.root_dir%/data.db3"
+
+    mailer_transport:  smtp
+    mailer_host:       127.0.0.1
+    mailer_user:       ~
+    mailer_password:   ~
+
+    # A secret key that's used to generate certain security-related tokens
+    secret:            ThisTokenIsNotSoSecretChangeIt
+    
+    monitor_password: monitor
+    jwt_passphrase: passphrase
+    zmq_notifier_address: tcp://127.0.0.1:5552
+
+    keys_path: '%kernel.root_dir%/var/keys'
+    keys_passphrase: passphrase
+    
+    backend_uri: '/app_dev.php/thrift/intergrid_backend'
+    admin_password: ASFkfd872384jdsjgngmnk
+    
+    devino_login: devino_login
+    devino_pass: devino_pass
+    
+    server_host: localhost

@@ -1,0 +1,9 @@
+{% block phone_widget %}
+    <div class="_phone">
+        {% set w_attr = {'class': 'form-control'} -%}
+        {%- if widget_attr is defined -%}
+            {% set w_attr = w_attr|merge(widget_attr) %}
+        {%- endif -%}
+        {{ form_widget(form, {'attr': w_attr}) }}
+    </div>
+{% endblock %}

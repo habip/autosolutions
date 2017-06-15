@@ -1,0 +1,5 @@
+AppBundle\Entity\Message\DialogParticipant:
+  exclusion_policy: ALL
+  properties:
+    user:
+      expose: true

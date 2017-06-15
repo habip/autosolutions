@@ -1,0 +1,10 @@
+AppBundle\Entity\Company:
+  exclusion_policy: ALL
+  properties:
+    id:
+      expose: true
+    serviceName:
+      expose: true
+    organizationInfo:
+      expose: true
+      groups: [admin]

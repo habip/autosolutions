@@ -1,0 +1,38 @@
+AppBundle\Entity\CarOwnerRequest:
+  exclusion_policy: ALL
+  properties:
+    id:
+      expose: true
+    addedTimestamp:
+      expose: true
+    status:
+      expose: true
+    car:
+      expose: true
+    carService:
+      expose: true
+    carOwner:
+      expose: true
+    services:
+      expose: true
+    carOwnerDate:
+      expose: true
+    carOwnerTimePeriod:
+      expose: true
+    items:
+      expose: true
+    post:
+      expose: true
+    entryTime:
+      expose: true
+    exitTime:
+      expose: true
+    phone:
+      expose: true
+    review:
+      expose: true
+    time:
+      expose: true
+    schedule:
+      expose: true
+      groups: [schedule]

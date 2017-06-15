@@ -1,0 +1,15 @@
+{% if app.user.carOwner.id is defined  %}
+<div class="list-timeline dropdown block" id="notification_block">
+    <a style="background-color:#18a24b !important;" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><i class="fa fa-refresh"></i>
+	<span class="hidden-xs"><span id="unread_text_count"></span></span>
+	<span class="hidden-sm hidden-md hidden-lg"><i class="si si-speech"></i></span>
+	<span id="unread_count" class="push-5-l"></span>
+	</a>
+    <div class="dropdown-menu col-md-12">
+            <a id="more" href="{{path('_car_owner_notifications')}}">История оповещений</a>
+            <div id="list"></div>
+            <div class="hide" id="empty">Нет оповещений</div>
+            <div class="hide" id="loading">Загрузка</div>
+    </div>
+</div>
+{% endif %}

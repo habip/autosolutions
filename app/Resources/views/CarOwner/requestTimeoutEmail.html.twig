@@ -1,0 +1,4 @@
+{% block subject %}Время вашей заявки №{{ request.id }} на {{ request.carOwnerDate | date('d.m') }} истекло{% endblock %}
+{% block body_html %}
+Вы подавали заявку №{{ request.id }} от {{ request.addedTimestamp | date('d.m.Y H:i:s') }} на {{ request.carOwnerDate | date('d.m') }} {% if request.carOwnerTimePeriod == 1 %}в первой половине дня{% else %}во второй половине дня{% endif %}. Ее время истекло.
+{% endblock %}

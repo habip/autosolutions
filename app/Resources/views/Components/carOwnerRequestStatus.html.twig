@@ -1,0 +1,21 @@
+{% macro toName(rating) %}
+    {% if rating=='new' %}
+    запрошено
+    {% elseif rating=='assign' %}
+    назначено
+    {% elseif rating=='reassign' %}
+    переназначено
+    {% elseif rating=='inprogress' %}
+    в процессе
+    {% elseif rating=='rejected' %}
+    отменено администратором
+    {% elseif rating=='canceled' %}
+    отменено автовладельцем
+    {% elseif rating=='timeout' %}
+    отменено по времени
+    {% elseif rating=='done' %}
+    завершено
+    {% elseif rating=='postponed' %}
+    отложено
+    {% endif %}
+{% endmacro %}

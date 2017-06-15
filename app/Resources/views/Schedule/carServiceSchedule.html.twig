@@ -1,0 +1,756 @@
+{% extends ':Schedule:layout.html.twig' %}
+
+
+{% block header %}
+    <header-fix id="header-navbar" class="bg-primary-darker" style="position:fixed; top:0px; padding-bottom:5px; z-index:1000">
+        <!-- Header Navigation Right -->
+        <ul class="nav-header hidden-lg hidden-md hidden-sm push-5-t">
+            <!--<li class="push-20-r pull-left">
+                    <img src="/img/logo_24.png" width="35" class="push-5-t push-10-l">
+            </li>-->
+            <li class="pull-left">
+                <div class="push-10-l push-5-t btn btn-primary _new_car_owner_request"><i class="fa fa-plus"></i> <span class="hidden-xs hidden-sm">Создать заявку</span></div>
+            </li>
+            <li>
+                    <table class="push-5-t pull-right" data-toggle="tabs">
+                    <tr>
+                    <td><a class="btn active btn-success push-10-l" href="#div_calendar"><i class="fa fa-calendar"></i></a></td>
+                    <td><a class="btn btn-default" href="#div_list"><i class="fa fa-list-ul"></i></a></td>
+                    </tr>
+                    </table>
+
+            </li>
+            <li class="push-5-t">
+
+                <div class="row">
+                    <div class="col-xs-6 col-md-4 col-sm-5 col-lg-3 push-10">
+
+                    <table class="">
+                    <tr>
+                    <!--<td class=""><a class="btn btn-default" href="{{path('_schedule_get', {carServiceId: carService.id, date: date|date_modify('-1 day')|date('Y-m-d')})}}"><i class="fa fa-chevron-left"></i></a></td>-->
+                    <td><input type="text" value="{{date|date('d.m.Y')}}" data-href="{{path('_schedule_get', {carServiceId: carService.id, date: '0000-00-00'})}}" class="_calendar_date_picker btn btn-primary" placeholder="{{date|date('d.m.Y')}}" data-date-format="dd.mm.yyyy" style="width: 110px;"></td>
+                    <!--<td class=""><a class="btn btn-default" href="{{path('_schedule_get', {carServiceId: carService.id, date: date|date_modify('+1 day')|date('Y-m-d')})}}"><i class="fa fa-chevron-right"></i></a></td>-->
+                    </tr>
+                    </table>
+
+                    </div>
+                    <div class="col-xs-6 col-md-4 col-sm-5 col-lg-6 text-right">
+
+                    <table class="pull-right" data-toggle="tabs">
+                    <tr>
+                    <td><div class="btn btn-default _to_scroll"><i class="fa fa-clock-o"></i> <span class="hidden-xs hidden-sm hidden-md">Сейчас</span> <span class="_time"></span></div></td>
+                    <!--<td><div class="btn btn-default _auto_scroll"><i class="fa fa-dot-circle-o"></i> <span class="hidden-xs hidden-sm hidden-md">Авто-промотка</span></div></td>-->
+                    <!--<td><div class="btn btn-default _fullscreen"><i class="glyphicon glyphicon-fullscreen"></i> <span class="hidden-xs hidden-sm hidden-md">На весь экран</span></div></td>-->
+
+                    </tr>
+                    </table>
+
+                    </div>
+                  </div>
+
+            </li>
+            <li class="pull-right">
+                <div class="push-5-t btn-group">
+                    <button type="button" data-toggle="dropdown" class="btn btn-default btn-image dropdown-toggle">
+                        <img alt="Avatar" src="{% if carService.logo is not null %}{{thumb(carService.logo, 80, 80, true)}}{% else %}/images/avatar1.jpg{% endif %}">
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                        <li class="dropdown-header">{{app.user.username}}</li>
+                        <li data-role="connection-status"><div>Нет соединения</div></li>
+                        <li>
+                            <a tabindex="-1" href="{{path('_logout')}}">
+                                <i class="si si-logout pull-right"></i>Выйти
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
+        </ul>
+
+       <ul class="nav-header hidden-xs push-5-t">
+            <li class="push-30-r">
+                    <img src="/img/logo_24.png" width="35" class="push-5-t push-10-l"/>
+            </li>
+            <li class="push-5-t">
+
+                <div class="row">
+                    <div class="col-xs-6 col-md-4 col-sm-5 col-lg-3 push-10">
+
+                    <table>
+                    <tr>
+                    <td><a class="btn btn-default" href="{{path('_schedule_get', {carServiceId: carService.id, date: date|date_modify('-1 day')|date('Y-m-d')})}}"><i class="fa fa-chevron-left"></i></a></td>
+                    <td><input type="text" value="{{date|date('d.m.Y')}}" data-href="{{path('_schedule_get', {carServiceId: carService.id, date: '0000-00-00'})}}" class="_calendar_date_picker btn btn-primary" placeholder="{{date|date('d.m.Y')}}" data-date-format="dd.mm.yyyy" style="width: 120px;"></td>
+                    <td><a class="btn btn-default" href="{{path('_schedule_get', {carServiceId: carService.id, date: date|date_modify('+1 day')|date('Y-m-d')})}}"><i class="fa fa-chevron-right"></i></a></td>
+                    </tr>
+                    </table>
+
+                    </div>
+                    <div class="col-md-4 col-sm-2 col-lg-3">
+
+                    <div class="btn btn-primary _new_car_owner_request"><i class="fa fa-plus"></i> <span class="hidden-lg hidden-md">Создать</span> <span class="hidden-xs hidden-sm">Создать заявку</span></div>
+
+                    </div>
+                    <div class="col-xs-6 col-md-4 col-sm-5 col-lg-6 text-right">
+
+                    <table class="pull-right" data-toggle="tabs">
+                    <tr>
+                    <td><div class="btn btn-default push-20-l _to_scroll"><i class="fa fa-clock-o"></i> <span class="hidden-xs hidden-sm hidden-md">Сейчас</span> <span class="_time"></span></div></td>
+                    <td><div class="btn btn-default _fullscreen"><i class="glyphicon glyphicon-fullscreen"></i> <span class="hidden-xs hidden-sm hidden-md">На весь экран</span></div></td>
+
+                    <td><a class="btn active btn-success push-10-l" href="#div_calendar"><i class="fa fa-calendar"></i> <span class="hidden-xs hidden-sm hidden-md">Календарь</span></a></td>
+                    <td><a class="btn btn-default" href="#div_list"><i class="fa fa-list-ul"></i>  <span class="hidden-xs hidden-sm hidden-md">Заявки</span></a></td>
+                    </tr>
+                    </table>
+
+                    </div>
+                  </div>
+
+            </li>
+            <li class="pull-right push-5-t">
+                <div class="btn-group">
+                    <button type="button" data-toggle="dropdown" class="btn btn-default btn-image dropdown-toggle">
+                        <img alt="Avatar" src="{% if carService.logo is not null %}{{thumb(carService.logo, 80, 80, true)}}{% else %}/images/avatar1.jpg{% endif %}">
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                        <li class="dropdown-header">{{app.user.username}}</li>
+                        <li>
+                            <a tabindex="-1" href="{{path('_logout')}}">
+                                <i class="si si-logout pull-right"></i>Выйти
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
+            <li class="pull-right push-5-t">
+                <div class="btn btn-danger" data-role="connection-status">Нет соеденения</div>
+            </li>
+        </ul>
+
+    </header-fix>
+        <!-- END Header Navigation Right -->
+
+    <!--<footer-fix class="hidden-lg hidden-md hidden-sm bg-primary-darker" style="width:100%; position: fixed; bottom: 0px; z-index:100006">
+
+        <ul class="nav-header">
+
+        </ul>
+
+    </footer-fix>-->
+
+{% endblock %}
+
+{% block body %}
+{% import ':Components:carOwnerRequestStatus.html.twig' as status %}
+
+<script>
+    var tuner = {
+
+        tpl: {
+            render: function(args){
+                var tpl = this.tpls[args.name];
+                var tempTpl;
+                for (key in this.tpls){
+                    tempTpl = this.tpls[key].view;
+                    tpl.view = tpl.view.split('#tpl_'+key+'#').join(tempTpl);
+                }
+                if (args.customRender!=undefined)
+                    args.customRender(tpl);
+                else
+                    document.write(tpl.view);
+            },
+
+    },
+
+    data: {
+        listener: function(newData){
+        }
+    }
+
+
+};
+
+
+tuner.data.listener('{car:{ name: "audi", model: "a7" }}');
+</script>
+
+<section class="push-15-l push-15-r">
+    <div class="row">
+        <div class="_car_owner_request_edit hide">
+            <div class="row">
+                <div class="_bar col-sm-12 bg-default">
+                    <div class="row">
+                        <div class="col-sm-5">
+                            <div class=" btn-group">
+                                <div class="btn btn-default _back push-20-l"><i class="fa fa-arrow-left"></i> <span class="hidden-xs">Назад</span></div>
+                                <div class="btn _title text-white push-30-l">ЗАЯВКА #<span class="_id"></span> <span class="_status"></span></div>
+                            </div>
+                        </div>
+                        <div class="col-sm-7">
+                            <div class=" btn-group pull-right">
+                                <a class="btn btn-default _call"><i class="fa fa-phone"></i> <span></span></a>
+                                <div class="btn btn-danger _rejected hide"><i class="fa fa-close"></i> <span class="hidden-xs">Отменить</span></div>
+                                <div class="btn btn-success _assign hide"><i class="fa fa-check"></i> <span class="hidden-xs">Принять</span></div>
+                                <div class="btn btn-success _reassign hide"><i class="fa fa-mail-reply"></i> <span class="hidden-xs">Переназначить</span></div>
+                                <div class="btn btn-primary _inprogress hide"><i class="fa fa-check"></i> <span class="hidden-xs">В процессе</span></div>
+                                <div class="btn btn-success _done hide"><i class="fa fa-check"></i> <span class="hidden-xs">Выполнено</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="_body col-md-12">
+
+
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <div class="block block-content">
+                                <div class="form-group">
+                                    <label>Автомобиль:</label>
+                                    <input class="form-control _car" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <div class="block block-content">
+                                <div class="form-group">
+                                    <label>Автовладелец:</label>
+                                    <input class="form-control _car_owner" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row push-20-t">
+                        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                            <div class="block block-content">
+                                <div class="form-group" data-role="schedule_post">
+                                    <label>Пост:</label>
+                                    <select class="form-control _post">
+                                        {% for post in carService.posts %}
+                                        <option value="{{post.id}}">{{post.name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                            <div class="block block-content">
+                                <div class="form-group" data-role="schedule_start_time">
+                                    <label>Назначенное время:</label>
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <input class="form-control _calendar_date_picker _entry_date" data-date-format="dd.mm.yyyy">
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <select class="form-control _entry_time">
+                                                {% set time = ''|date_modify('00:30') %}
+                                                {% for h in carService.getWorkingHoursIterator(date) %}
+                                                <option>{{ h | date('H:i') }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                            <div class="block block-content">
+
+                                <div class="form-group" data-role="schedule_end_time">
+                                    <label>Длительность:</label>
+                                    <div class="row">
+                                        <div class="col-sm-12 btn-group _duration_time">
+                                            {% set time = ''|date_modify('00:'~carService.timeInterval) %}
+                                            {% set timeMinutes = carService.timeInterval %}
+                                            {% for i in 0..5 %}
+                                            <div class="col-sm-2 btn btn-default" data-value="{{timeMinutes}}">{{time|date("G:i")}}</div>
+                                            {% set time = time|date_modify('+'~carService.timeInterval~' minutes') %}
+                                            {% set timeMinutes = timeMinutes+carService.timeInterval %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                                <div class="form-group" data-role="services">
+                                    <div class="row push-20-t">
+                                        <div class="col-xs-12 col-sm-12 col-md-5 col-lg-4">
+                                            <div class="block block-content">
+                                                <label>Заказаная услуга:</label>
+                                                <div class="row _services">
+                                                    {% for service in services %}
+                                                    <div class="col-xs-12 col-md-6 push-10-b" data-service="{{service.id}}">
+                                                        <div class="btn btn-default col-xs-12">
+                                                            <div class="row">
+                                                                <div class="col-xs-10 text-left"><h6 class="white-space-normal">{{service.name}}</h6></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {% endfor %}
+                                                    <div class="col-xs-12 col-md-6 push-10-b _empty hide">нет услуг</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-7 col-lg-8">
+                                            <div class="block block-content">
+                                                <label>Оказанные услуги:</label>
+                                                <div data-role="items"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+
+
+                </div>
+            </div>
+        </div>
+
+        <div class="_calendar_requests_wrap">
+            <div class="_calendar_wrap tab-active active" id="div_calendar">
+                <div class="_calendar">
+                    <div class="_calendar_body">
+                        <div class="_row _datetime" data-date-interval="{{carService.timeInterval}}">
+                            <div class="_col _div"></div>
+                            {% for h in carService.getWorkingHoursIterator(date) %}
+                            <div class="_col" style="height:{{carService.posts|length*100+40}}px" data-pick-date="{{ h | date('Y.m.d.H.i') }}"><span>{{ h | date('H:i') }}</span></div>
+                            {% endfor %}
+                        </div>
+                        <div class="_master hide">
+                            <div class="_col" data-shedule>
+                                <div class="_id"></div>
+                                <div class="_car_model"></div>
+                                <div class="_car_number"></div>
+                            </div>
+                        </div>
+                        {% for post in carService.posts %}
+                        <div class="_row _post" data-post="{{post.id}}">
+                            <div class="_col _div">{{ post.name }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="_cursor hide"><div class="_time"></div></div>
+                </div>
+            </div>
+            <div class="_car_owner_requests hide" id="div_list">
+
+                <div class="row">
+                    <div class="col-sm-12 border-b">
+                        <div class="push-20-t push-50-l push-20"><h3 class="font-w300">Заявки</h3></div>
+                    </div>
+                    <div class="col-sm-12 push-30-t">
+
+
+                        <div class="col-md-3 hidden-xs hidden-sm">
+
+                            <div class="row">
+                                <div class="col-sm-12 push-50-l push-50-r">
+                                    <div class="block">
+                                        <div class="block-content">
+                                            <ul class="nav nav-pills nav-stacked push" data-role="status-filter">
+                                                <li>
+                                                    <a href="javascript:void(0)" data-status="all">
+                                                        <span class="badge pull-right"></span><i class="si si-arrow-down push-5-r"></i> Все
+                                                    </a>
+                                                </li>
+                                                <li class="active">
+                                                    <a href="javascript:void(0)" data-status="new">
+                                                        <span class="badge pull-right"></span><i class="si si-arrow-down push-5-r"></i> Новые
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="javascript:void(0)" data-status="assign">
+                                                        <span class="badge pull-right"></span><i class="si si-arrow-down push-5-r"></i> Назначеные
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="javascript:void(0)" data-status="inprogress">
+                                                        <span class="badge pull-right"></span><i class="si si-clock push-5-r"></i> В работе
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="javascript:void(0)" data-status="done">
+                                                        <span class="badge pull-right"></span><i class="si si-check push-5-r"></i> Выполненые
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="javascript:void(0)" data-status="rejected">
+                                                        <span class="badge pull-right"></span><i class="si si-close push-5-r"></i> Отмененые
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-8 ">
+                            <div class="push-50-l" data-role="notifications-container"></div>
+                            <div class="_empty hide text-center text-muted push-10-t">Нет заявок</div>
+                            <div class="_content push-50-l"></div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="modal" id="newCarOwnerRequest" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content push-50-t">
+            <div class="block block-themed block-transparent remove-margin-b">
+                <div class="block-header">
+                    <ul class="block-options">
+                        <li>
+                            <button data-dismiss="modal" type="button"><i class="si si-close text-black"></i></button>
+                        </li>
+                    </ul>
+                    <h3 class="h3 font-w300">Создать заявку</h3>
+                </div>
+                <form class="block-content">
+                    <div class="form-group" data-role="schedule_start_time">
+                        <label>Назначенное время:</label>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <input class="form-control input-lg _calendar_date_picker _entry_date" value="{{'now'|date('d.m.Y')}}" data-date-format="dd.mm.yyyy">
+                            </div>
+                            <div class="col-sm-6">
+                                <select class="form-control input-lg _entry_time">
+                                    {% set time = ''|date_modify('00:30') %}
+                                    {% for h in carService.getWorkingHoursIterator(date) %}
+                                    <option>{{ h | date('H:i') }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" data-role="schedule_end_time">
+                        <label>Длительность:</label>
+                        <div class="row">
+                            <div class="col-sm-12 btn-group _duration_time">
+                                {% set time = ''|date_modify('00:'~carService.timeInterval) %}
+                                {% set timeMinutes = carService.timeInterval %}
+                                {% for i in 0..5 %}
+                                <div class="col-sm-2 btn{% if loop.first %} btn-success active{% else %} btn-default{% endif %}" data-value="{{timeMinutes}}">{{time|date("G:i")}}</div>
+                                {% set time = time|date_modify('+'~carService.timeInterval~' minutes') %}
+                                {% set timeMinutes = timeMinutes+carService.timeInterval %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" data-role="schedule_post">
+                        <label>Пост:</label>
+                        <select class="form-control input-lg _post">
+                            {% for post in carService.posts %}
+                            <option value="{{post.id}}">{{post.name}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group" data-role="schedule_services">
+                        <label>Услуги:</label>
+                        <div class="row _services">
+                            {% for service in services %}
+                            <div class="col-xs-12 col-md-6 push-10-b hide" data-service="{{service.id}}">
+                                <div class="btn btn-default col-xs-12">
+                                    <div class="row">
+                                        <div class="col-xs-10 text-left"><h6 class="white-space-normal">{{service.name}}</h6></div>
+                                        <div class="col-xs-2 text-right"><i class="fa fa-close"></i></div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            <div class="col-xs-12 col-md-6 push-10-b _empty">нет услуг</div>
+                        </div>
+                        <div class="btn btn-default _services_select"><i class="fa fa-plus"></i> Выбрать</div>
+                    </div>
+                    <div class="form-group" data-role="car_brand">
+                        <label><h5>Марка автомобиля</h5></label>
+                        <input class="form-control input-lg" type="text" data-search="{{path('_search_brand')}}" name="car_brand">
+                    </div>
+                    <div class="form-group" data-role="car_model">
+                        <label><h5>Модель автомобиля</h5></label>
+                        <input class="form-control input-lg" type="text" data-search="{{path('_search_model')}}" data-related="car_brand" name="car_model" >
+                    </div>
+                    <div class="form-group" data-role="car_number">
+                        <label><h5>Государственный номер</h5></label>
+                        <div class="input_car_number form-control input-lg remove-padding">
+                            <input type="text" class="form-control-flat input-lg input_text" size="5" placeholder="A001AA" maxlength="6">
+                            <input type="text" class="form-control-flat input-lg input_number remove-padding-l" size="3" placeholder="16" maxlength="3">
+                            <input type="hidden" name="car_number"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group" data-role="car_owner_first_name">
+                                <label><h5>Имя автовладельца</h5></label>
+                                <input class="form-control input-lg _car_owner_first_name" type="text">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" data-role="phone">
+                        <label><h5>Номер телефона</h5></label>
+                        <input class="form-control input-lg input_phone _car_owner_phone" type="text">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-sm btn-default" data-dismiss="modal">Отменить</a>
+                <a class="btn btn-sm btn-primary _add"><i class="fa fa-check"></i> ОК</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade in" id="servicesItem" role="dialog" aria-hidden="false">
+    <div class="modal-dialog block">
+        <div class="modal-content  bg-gray-lighter-saturation">
+            <div class="block-header bg-white push-10">
+                <ul class="block-options">
+                    <li><div data-dismiss="modal"><i class="si si-close"></i></div></li>
+                </ul>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h2 class="remove-margin-b font-w300 push">Укажите какие услуги были оказаны</h2>
+                        <h4 class="remove-margin-b font-w300 push">Заявка №<span class="_id"></span> от <span class="_date"></span>; Автомобиль: <span class="_car_brand"></span> <span class="_car_model"></span> (<span class="_car_number"></span>)</h4>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="btn btn-success _done_accept pull-right push-30-r">Закрыть эту заявку <i class="fa fa-chevron-right"></i></div>
+                    </div>
+                </div>
+            </div>
+            <div class="block-content bg-white">
+                <div class="row">
+
+
+                    <!--<div class="general_col">
+
+                        <div class="row _already_selected hide push-20">
+                            <div class="col-md-8">
+                                <h3 class="block-title push-10-l  push-5">Выбрано:</h3>
+                                <div class="_content push-5"></div>
+                            </div>
+                            <div class="col-md-4 text-right">
+                                <span class="h4">Итого на сумму: </span><span class="_sum h1 font-w700"></span><span class="h3"> <i class="fa fa-rub"></i></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="block block-themed">
+                                    <div class="block-header bg-danger" style="padding: 10px 20px;">
+                                        <h3 class="block-title">Услуги и их стоимость</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div id="services-tree">
+                                </div>
+                            </div>
+
+                            <div class="col-md-9" style="position: relative">
+                                <div id="company-services-table">
+                                </div>
+                                <div id="service-costs-table">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/template" id="car-owner-request-template">
+    <div class="tile tile-default col-sm-12">
+        <div class="row text-left _info">
+            <div class="col-md-12 _base_info">
+                <div class="row">
+                    <div class="col-sm-12 _title">ЗАЯВКА #<%= id %></div>
+                    <% if (status == 'new' || typeof schedule === 'undefined' || !schedule) { %>
+                    <div class="col-sm-12 text-muted _status">Запрошено на: <% print(moment(car_owner_date).format('HH:mm DD-MM-YYYY')) %></div>
+                    <% } else { %>
+                    <div class="col-sm-12 text-muted _status">Назначено на: <% print(moment(schedule.get('start_time')).format('HH:mm DD-MM-YYYY')) %></div>
+                    <% } %>
+                </div>
+            </div>
+            <div class="col-md-11 push-10-t _full_info">
+                <div class="row">
+                    <div class="col-sm-4 text-muted">Автомобиль:&nbsp;</div>
+                    <div class="col-sm-8"><%= car.brand.name %> <%= car.model.name %><br><%= car.number %></div>
+                    <div class="col-sm-12"><hr/></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4 text-muted">Владелец:&nbsp;</div>
+                    <div class="col-sm-8"><%= car_owner.first_name %> <%= car_owner.last_name %><br><%= phone || car_owner.phone %></div>
+                    <div class="col-sm-12"><hr/></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4 text-muted">Услуги:&nbsp;</div>
+                    <div class="col-sm-8"><% if (services && services.length > 0) { print(_.reduce(services, function(memo, service, index) { return memo + (index > 0 ? ', ' : '') + service.name; }, ''));  } else { %><span class="_service_info">нет</span><% } %></div>
+                    <div class="col-sm-12"><hr/></div>
+                </div>
+            </div>
+            <div class="col-sm-11 push-10-t">
+                <div class="btn-group btn-group-justified">
+                    <div class="col-sm-6 btn btn-default hide _ok">ОК</div>
+                    <% if (status == 'new') { %>
+                    <div class="col-sm-6 btn btn-success _accept"><i class="fa fa-check"></i> Принять</div>
+                    <% } %>
+                    <div class="col-sm-6 btn btn-default _more">Подробнее</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/template" id="calendar-record-template">
+        <div class="_id">#<%=get('id')%> <%=getStatusText()%></div>
+        <div class="_car_model"><%=get('car').brand.name%> <%=get('car').model.name%></div>
+        <div class="_car_number"><%=get('car').number%></div>
+</script>
+
+<script type="text/template" id="time-is-coming-template">
+    <div class="tile tile-default col-sm-12" style="border-color: rgb(60, 107, 201); background-color: rgb(249, 247, 223);">
+        <div class="row text-left _info">
+            <div class="col-md-12 _base_info">
+                <div class="row">
+                    <div class="col-sm-12 _title">ЗАЯВКА #<%= id %></div>
+                    <div class="col-sm-12 text-muted _status">Назначено на: <% print(moment(schedule.get('start_time')).format('HH:mm DD-MM-YYYY')) %></div>
+                </div>
+            </div>
+            <div class="col-md-11 push-10-t _full_info">
+                <div class="row">
+                    <div class="col-sm-4 text-muted">Автомобиль:&nbsp;</div>
+                    <div class="col-sm-8"><%= car.brand.name %> <%= car.model.name %><br><%= car.number %></div>
+                    <div class="col-sm-12"><hr/></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4 text-muted">Владелец:&nbsp;</div>
+                    <div class="col-sm-8"><%= car_owner.first_name %> <%= car_owner.last_name %><br><%= phone || car_owner.phone %></div>
+                    <div class="col-sm-12"><hr/></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4 text-muted">Услуги:&nbsp;</div>
+                    <div class="col-sm-8"><% if (services && services.length > 0) { print(_.reduce(services, function(memo, service, index) { return memo + (index > 0 ? ', ' : '') + service.name; }, ''));  } else { %><span class="_service_info">нет</span><% } %></div>
+                    <div class="col-sm-12"><hr/></div>
+                </div>
+            </div>
+            <div class="col-sm-11 push-10-t">
+                <button class="btn btn-success _arrived"><i class="fa fa-check"></i> Подъехал</button>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Подъедет через <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a href="#" class="_delayed" data-delay="5">5 минут</a></li>
+                        <li><a href="#" class="_delayed" data-delay="10">10 минут</a></li>
+                        <li><a href="#" class="_delayed" data-delay="15">15 минут</a></li>
+                        <li><a href="#" class="_delayed" data-delay="20">20 минут</a></li>
+                        <li><a href="#" class="_cancel">Отменить</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/template" id="time-is-ending-template">
+    <div class="tile tile-default col-sm-12" style="border-color: rgb(60, 107, 201); background-color: rgb(249, 247, 223);">
+        <div class="row text-left _info">
+            <div class="col-md-12 _base_info">
+                <div class="row">
+                    <div class="col-sm-12 _title">ЗАЯВКА #<%= id %></div>
+                    <div class="col-sm-12 text-muted _status">Назначено на: <% print(moment(schedule.get('start_time')).format('HH:mm DD-MM-YYYY')) %></div>
+                </div>
+            </div>
+            <div class="col-md-11 push-10-t _full_info">
+                <div class="row">
+                    <div class="col-sm-4 text-muted">Автомобиль:&nbsp;</div>
+                    <div class="col-sm-8"><%= car.brand.name %> <%= car.model.name %><br><%= car.number %></div>
+                    <div class="col-sm-12"><hr/></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4 text-muted">Владелец:&nbsp;</div>
+                    <div class="col-sm-8"><%= car_owner.first_name %> <%= car_owner.last_name %><br><%= phone || car_owner.phone %></div>
+                    <div class="col-sm-12"><hr/></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4 text-muted">Услуги:&nbsp;</div>
+                    <div class="col-sm-8"><% if (services && services.length > 0) { print(_.reduce(services, function(memo, service, index) { return memo + (index > 0 ? ', ' : '') + service.name; }, ''));  } else { %><span class="_service_info">нет</span><% } %></div>
+                    <div class="col-sm-12"><hr/></div>
+                </div>
+            </div>
+            <div class="col-sm-11 push-10-t">
+                <button class="btn btn-success _done"><i class="fa fa-check"></i> Выполнено</button>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Будет готово <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a href="#" class="_delayed" data-delay="5">5 минут</a></li>
+                        <li><a href="#" class="_delayed" data-delay="10">10 минут</a></li>
+                        <li><a href="#" class="_delayed" data-delay="15">15 минут</a></li>
+                        <li><a href="#" class="_delayed" data-delay="20">20 минут</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+{% set modal_id = 'services_modal' %}
+{{ include(':Components:servicesModal.html.twig') }}
+
+{% endblock %}
+{% block css %}
+<style>
+
+.btn .badge-notify{
+    background:red;
+    position:relative;
+    top: -18px;
+    left: 22px;
+    color: #fff;
+}
+
+#servicesItem{
+    padding: 0px !important;
+}
+#servicesItem .modal-dialog{
+    width: 100%;
+    margin: 0px;
+    height: 100%;
+}
+#servicesItem .modal-content{
+    height: 100%;
+    overflow: auto;
+}
+#company-services-table .active td{
+    background-color: rgb(70, 195, 123);
+    color: #FFF;
+}
+</style>
+{% endblock %}
+
+
+{% block js %}
+        {% javascripts
+            '../app/Resources/public/car-service-schedule.js'
+            %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+{% endblock %}

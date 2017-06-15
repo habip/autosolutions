@@ -1,0 +1,254 @@
+{% extends '::mainLayout.html.twig' %}
+
+{% macro status_icon(status) %}
+    {% if status == 'new' %}
+    <i class="fa fa-rocket list-timeline-icon bg-success"></i>
+    {% elseif status == 'inprogress' %}
+    <i class="fa fa-refresh fa-spin list-timeline-icon bg-primary"></i>
+    {% elseif status == 'assign' %}
+    <i class="fa fa-clock-o list-timeline-icon bg-primary"></i>
+    {% elseif status == 'reassign' %}
+    <i class="fa fa-refresh fa-spin list-timeline-icon bg-warning"></i>
+    {% elseif status == 'canceled' %}
+    <i class="fa fa-times list-timeline-icon bg-danger"></i>
+    {% elseif status == 'rejected' %}
+    <i class="fa fa-times list-timeline-icon bg-danger"></i>
+    {% elseif status == 'timeout' %}
+    <i class="fa fa-clock-o list-timeline-icon bg-warning"></i>
+    {% elseif status == 'done' %}
+    <i class="fa fa-check list-timeline-icon bg-success"></i>
+    {% endif %}
+{% endmacro %}
+
+{% macro status_label(status) %}
+    {% if status == 'new' %}
+    <div class="label label-success">новая</div>
+    {% elseif status == 'inprogress' %}
+    <div class="label label-primary">в работе</div>
+    {% elseif status == 'assign' %}
+    <div class="label label-primary">назначено</div>
+    {% elseif status == 'reassign' %}
+    <div class="label label-warning">переназначено</div>
+    {% elseif status == 'canceled' %}
+    <div class="label label-danger">отменено</div>
+    {% elseif status == 'rejected' %}
+    <div class="label label-danger">отклонено</div>
+    {% elseif status == 'timeout' %}
+    <div class="label label-warning">истекло</div>
+    {% elseif status == 'done' %}
+    <div class="label label-success">выполнено</div>
+    {% endif %}
+{% endmacro %}
+
+{% block title %}Главная{% endblock %}
+{% block body %}
+    {% import _self as request %}
+	
+	<div style="background:rgb(245, 245, 245)"">
+	
+    <div class="content bg-image" style="background-image: url('/img/photos/photo8@2x.jpg');">
+        <div class="push-50-t push-15 clearfix">
+            <div class="push-15-r pull-left animated fadeIn">
+                <img class="img-avatar img-avatar-thumb" src="/img/avatars/avatar13.jpg" alt="">
+            </div>
+            <h1 class="h2 text-white push-5-t">{{app.user.carOwner.firstName}} {{app.user.carOwner.lastName}}</h1>
+            <h2 class="h5 text-white-op">{{app.user.carOwner.locality.name}}</h2>
+        </div>
+    </div>
+
+    <div class="content bg-white border-b">
+        <div class="row items-push text-uppercase">
+            <div class="col-xs-6 col-sm-3">
+                <div class="font-w700 text-gray-darker animated fadeIn">В системе</div>
+                <div class="h2 font-w300 text-primary animated flipInX">{{(('now'|date('U')-app.user.registrationDate|date('U'))/2592000)|round(0, 'floor')}} месяцев</div>
+            </div>
+            <div class="col-xs-6 col-sm-3">
+                <div class="font-w700 text-gray-darker animated fadeIn">Выполненных заявок</div>
+                <div class="h2 font-w300 text-primary animated flipInX">{{carOwnerRequestsSuccessCount}}</div>
+            </div>
+            <div class="col-xs-6 col-sm-3">
+                <div class="font-w700 text-gray-darker animated fadeIn">Текущих заявок</div>
+                <div class="h2 font-w300 text-primary animated flipInX">{{carOwnerRequestsNotCloseCount}}</div>
+            </div>						
+            <div class="col-xs-6 col-sm-3">
+                <div class="font-w700 text-gray-darker animated fadeIn">Оказано услуг на сумму</div>
+                <div class="h2 font-w300 text-primary animated flipInX">{{carOwnerRequestsAllPrices}} руб.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content content-boxed" style="background-color:rgb(245, 245, 245)">
+        <div class="row">
+            <div class="col-sm-12 col-lg-6">
+
+                <div>
+                    <div class="row">
+                        <div class="col-sm-6 col-lg-4">	
+                            <a class="item-link item-rounded pull-left push-10-r" href="{{path('_search_service')}}">
+                                <i class="si si-rocket text-primary-dark"></i><br/>
+                                <h5 class="text-primary-dark">Подать заявку</h5>
+                            </a>			
+                        </div>
+                        <div class="col-sm-6 col-lg-4">	
+                            <a class="item-link item-rounded pull-left push-10-r" href="{{path('_car_owner_requests')}}">
+                                <i class="si si-calendar text-primary-dark"></i><br/>
+                                <h5 class="text-primary-dark">Мои заявки</h5>												
+                            </a>										
+                        </div>
+                        <div class="col-sm-6 col-lg-4">
+                            <a class="item-link item-rounded pull-left push-10-r" href="{{path('_car_owner_profile')}}">
+                                <i class="si si-user text-primary-dark"></i><br/>
+                                <h5 class="text-primary-dark">Мой профиль</h5>												
+                            </a>										
+                        </div>										
+                    </div>	
+                    <div class="row push-20-t push-50">
+                        <div class="col-sm-6 col-lg-4">	
+                            <a class="item-link item-rounded pull-left push-10-r" href="{{path('_car_owner_cars')}}">
+                                <i class="si si-heart text-primary-dark"></i><br/>
+                                <h5 class="text-primary-dark">Мой автомобиль</h5>	
+                            </a>			
+                        </div>
+                        <div class="col-sm-6 col-lg-4">	
+                            <a class="item-link item-rounded pull-left push-10-r" href="{{path('_car_owner_help')}}">
+                                <i class="si si-info text-primary-dark"></i><br/>
+                                <h5 class="text-primary-dark">Помощь</h5>												
+                            </a>										
+                        </div>
+                        <div class="col-sm-6 col-lg-4">
+                            <a class="item-link item-rounded pull-left push-10-r" href="{{path('_car_owner_downloads')}}">
+                                <i class="si si-screen-smartphone text-primary-dark"></i><br/>
+                                <h5 class="text-primary-dark">Приложение</h5>												
+                            </a>										
+                        </div>											
+                    </div>	
+                </div>
+
+                <div class="block">
+                    <div class="block-header bg-gray-lighter">
+                        <h3 class="block-title"><i class="fa fa-fw fa-briefcase"></i> Документация</h3>
+                    </div>
+                    <div class="block-content">
+                
+                        <ul class="list list-simple list-li-clearfix">
+                            <li>
+                                <a class="item item-rounded pull-left push-10-r bg-info" href="javascript:void(0)">
+                                    <i class="si si-rocket text-white-op"></i>
+                                </a>
+                                <h5 class="push-10-t">Памятка</h5>
+                                <div class="font-s13">Краткая документация по работе с системой</div>
+                            </li>
+                            <li>
+                                <a class="item item-rounded pull-left push-10-r bg-danger" href="javascript:void(0)">
+                                    <i class="si si-speedometer text-white-op"></i>
+                                </a>
+                                <h5 class="push-10-t">Отчет</h5>
+                                <div class="font-s13">Текущий отчет</div>
+                            </li>
+                        </ul>
+                        <div class="text-center push">
+                            <small><a href="javascript:void(0)">Вся документация..</a></small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 col-lg-6">
+
+                <div class="block">
+                    <div class="block-header bg-gray-lighter">
+                        <h3 class="block-title"><i class="fa fa-fw fa-share-alt"></i> Последние заявки</h3>
+                    </div>
+                    <div class="block-content">
+                        <ul class="list list-timeline pull-t text-left">                
+                            {% for carOwnerRequest in carOwnerRequests %}
+                            {% if loop.index<5 %}
+                            <li>
+							
+							<div class="list-timeline-time h5 push-20-l push-20-t">
+							<span style="display:block !important; padding-bottom:15px !important">{{ request.status_label(carOwnerRequest.status) }}</span> {% if carOwnerRequest.status!='canceled' and carOwnerRequest.status!='rejected' and carOwnerRequest.status!='timeout' %}  на {{carOwnerRequest.carOwnerDate|date('d.m.y')}} <h2>{{carOwnerRequest.carOwnerDate|date('H:i')}}</h2> {% endif %} </div>
+                                <!--<div class="list-timeline-time">{{carOwnerRequest.addedTimestamp|date('Y-m-d H:i:s')}}</div>-->
+                                <!--{% if carOwnerRequest.status == 'new' %}
+                                <i class="fa fa-arrow-right list-timeline-icon bg-success"></i>
+                                {% elseif carOwnerRequest.status == 'inprogress' %}
+                                <i class="fa fa-arrow-right list-timeline-icon bg-warning"></i>
+                                {% elseif carOwnerRequest.status == 'assign' %}
+                                <i class="fa fa-arrow-right list-timeline-icon bg-success"></i>
+                                {% elseif carOwnerRequest.status == 'reassign' %}
+                                <i class="fa fa-arrow-right list-timeline-icon bg-warning"></i>
+                                {% elseif carOwnerRequest.status == 'canceled' %}
+                                <i class="fa fa-arrow-right list-timeline-icon bg-danger"></i>
+                                {% elseif carOwnerRequest.status == 'rejected' %}
+                                <i class="fa fa-arrow-right list-timeline-icon bg-danger"></i>
+                                {% elseif carOwnerRequest.status == 'timeout' %}
+                                <i class="fa fa-arrow-right list-timeline-icon bg-warning"></i>
+                                {% elseif carOwnerRequest.status == 'done' %}
+                                <i class="fa fa-arrow-right list-timeline-icon bg-success"></i>
+                                {% endif %}-->
+                                <div class="list-timeline-content">
+                                    <div class="row">
+                                        <div class="col-lg-4">
+                                            <h4 class="h5 font-w600 text-danger"><a href="{{path('_car_owner_request', { id: carOwnerRequest.id })}}">Заявка #{{carOwnerRequest.id}}</a></h4>
+                                            <!--{% if carOwnerRequest.status == 'new' %}
+                                            <div class="label label-success push-10-t">новая</div>
+                                            {% elseif carOwnerRequest.status == 'inprogress' %}
+                                            <div class="label label-primary push-10-t">в работе</div>
+                                            {% elseif carOwnerRequest.status == 'assign' %}
+                                            <div class="label label-primary push-10-t">назначено</div>
+                                            {% elseif carOwnerRequest.status == 'reassign' %}
+                                            <div class="label label-primary push-10-t">переназначено</div>
+                                            {% elseif carOwnerRequest.status == 'canceled' %}
+                                            <div class="label label-danger push-10-t">отменено</div>
+                                            {% elseif carOwnerRequest.status == 'rejected' %}
+                                            <div class="label label-danger push-10-t">отклонено</div>
+                                            {% elseif carOwnerRequest.status == 'timeout' %}
+                                            <div class="label label-danger push-10-t">истекло</div>
+                                            {% elseif carOwnerRequest.status == 'done' %}
+                                            <div class="label label-info push-10-t">Статусвыполнено</div>
+                                            {% endif %}-->
+                                            <div class="font-s13 push-10-t push-20"><a>{{carOwnerRequest.carService.company.serviceName}}</a></div>
+                                            <a class="btn btn-default push-10" href="{{path('_car_owner_request', { id: carOwnerRequest.id })}}">Подробнее</a>
+                                        </div>
+                                    <div class="col-lg-8">
+									
+                                                                                {% if carOwnerRequest.status=='done' and  carOwnerRequest.workItemsSum>0 %}
+
+																				<hr style="margin-top:10px !important; margin-bottom:10px !important"/>
+																			
+																				<div class="row font-s14">
+																					<div class="col-md-6"><span class="push-20-l font-w700">Стоимость работ</span></div>
+																					<div class="col-md-6 font-w700">{{ carOwnerRequest.workItemsSum | number_format(2, ',', ' ') }} руб</div>
+																				</div>	
+
+                                                                                {% endif %}
+																				
+
+                                                                                    <hr style="margin-top:10px !important; margin-bottom:10px !important"/>
+																					
+                                                                            <div class="row font-s14">
+                                                                                <div class="col-md-12">
+                                                                                {% for service in carOwnerRequest.services %}
+                                                                                    <div class="push-5"><i class="fa fa-check push-5-r text-success"></i>{{ service.name }}</div>
+                                                                                {% endfor %}
+                                                                                </div>
+                                                                            </div>																				
+                                    </div>
+                                </div>
+                                <hr>
+                            </div>
+                            </li>  
+                            {% endif %}
+                            {% endfor %}
+                        </ul>
+                        <div class="text-center push">
+                            <small><a href="{{path('_car_owner_requests')}}">Все заявки</a></small>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+	
+	
+	</div>
+{% endblock %}

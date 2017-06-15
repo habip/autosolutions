@@ -1,0 +1,84 @@
+{% extends '::reg.html.twig' %}
+
+{% block title %}{{ 'registration.specify_registration_data'|trans }}{% endblock %}
+
+{% block body %}
+
+    {{ form_start(form, { 'attr' : { class: '_col_12', style: 'margin: 0 auto;' } }) }}
+    {{ form_row(form.firstName) }}
+    {{ form_row(form.lastName) }}
+    {{ form_row(form.nickname) }}
+    {{ form_row(form.gender) }}
+    <div class="form-group{% if form.birthday.vars.errors|length > 0 %} has-error{% endif %}">
+        <label for="birthday" class="col-xs-12">Дата рождения</label>
+        <div class="col-xs-12 form-inline">
+            {{ form_widget(form.birthday.day, {'attr': {'class': 'form-control'}}) }}
+            {{ form_widget(form.birthday.month, {'attr': {'class': 'form-control'}}) }}
+            {{ form_widget(form.birthday.year, {'attr': {'class': 'form-control'}}) }}
+            {% if form.birthday.vars.errors|length > 0 %}
+            <span class="help-block">{{ form_errors(form.birthday)}}</span>
+            {% endif %}
+        </div>
+    </div>
+    {{ form_row(form.locality, {attr: { 'data-search': path('_search_locality') }}) }}
+    {{ form_row(form.user.email) }}
+    {{ form_row(form.user.plainPassword) }}
+    {{ form_row(form.captcha) }}
+    {{ form_row(form.save, {'attr': {'class': 'btn btn-danger text-center push-20-t'}}) }} 
+    {{ form_end(form) }}
+
+{% endblock %}
+
+
+{% block js %}
+        {% javascripts
+            '../app/Resources/public/js/jquery-ui.min.js'
+            '../app/Resources/public/js/jquery.ui.autocomplete.min.js'
+            '../app/Resources/public/js/jquery.ui.localityinput.js'
+            '../app/Resources/public/js/pwstrength-bootstrap.min.js'
+            %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+        <script>
+            $(function () {
+                "use strict";
+                var options = {};
+                options.i18n = {
+                        t: function (key) {
+                            var trans = {
+                                "wordLength": "Пароль слишком короткий",
+                                "wordNotEmail": "Не используйте email для пароля",
+                                "wordSimilarToUsername": "Пароль не должен содержать имя пользователя",
+                                "wordTwoCharacterClasses": "Используйте разные классы символов",
+                                "wordRepetitions": "Слишком много повторений",
+                                "wordSequences": "Ваш пароль содержит последовательности",
+                                "errorList": "Ошибки:",
+                                "veryWeak": "Очень слабый",
+                                "weak": "Слабый",
+                                "normal": "Нормальный",
+                                "medium": "Средний",
+                                "strong": "Сильный",
+                                "veryStrong": "Очень сильный"
+                            },
+                            result = trans[key];
+
+                            return result === key ? '' : result;
+                        }
+                    };
+                options.ui = {
+                    showPopover: true,
+                    popoverPlacement: "right",
+                    showErrors: false,
+                    showProgressBar: false
+                };
+                options.rules = {
+                    activated: {
+                        wordTwoCharacterClasses: true,
+                        wordRepetitions: true
+                    }
+                };
+                $('#car_owner_registration_user_plainPassword_first').pwstrength(options);
+            });
+        </script>
+{% endblock %}
+

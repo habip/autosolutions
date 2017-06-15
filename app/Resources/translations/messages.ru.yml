@@ -1,0 +1,136 @@
+registration:
+    title: Регистрация
+    password: Пароль
+    password_repeat: Повторите пароль
+    captcha: Введите символы
+    save: Зарегистрироваться
+    check_email: Письмо отправлено на адрес %email%. В нём содержится ссылка, по которой вы можете подтвердить свою регистрацию.
+    continue: Продолжить работу
+    specify_registration_data: Укажите регистрационные данные
+
+login:
+    bad_credentials: Не верный пароль или имя пользователя
+    disabled: Ваша учетная запись деактивированна
+
+company:
+    service_name: Наименование
+    contact_person: Контактное лицо
+    phone: Контактный телефон
+    description: Описание
+    save: Сохранить
+    edit_profile: Редактировать
+    profile: Профиль
+    main: Главная
+    consolidated_report: Сводный отчет
+    report_on_request: Отчет по поступившим заявкам
+    last_messages: Последние сообщения от клиентов
+    download: Скачать
+    downloads: Скачать программу
+    download_to_work: Для работы в системе вам необходимо установить программу
+    download_last_version: Скачать последнюю версию
+    services_provided: Услуги
+    messages: Сообщения
+    reports: Отчеты
+    payments: Оплата
+    settings: Настройки
+    qr_login: Авторизация с помощью QR-кода
+    qr_login_description: Поднесите устройство с открытым окном сканирования, так что бы камера видела QR-код авторизации.
+    change_image: Загрузить другое изображение
+    
+    workplace:
+        token: Токен авторизации
+        description: Описание
+        add: Добавить
+        save: Сохранить
+    
+car_owner:
+    first_name: Имя
+    last_name: Фамилия
+    nickname: Ник
+    gender: Пол
+    birthday: Дата рождения
+
+address:
+    country: Страна
+    locality: Город
+    street_address: Адрес
+    choose_locality: Выберите город
+    choose_country: Выберите страну
+
+service:
+    name: Наименование
+    settings: Настройка автосервиса
+    phone: Контактный телефон
+    locality: Местоположение
+    more: Подробнее
+    delete: Удалить
+
+Director: Директор
+Working_hours: Рабочие часы
+Save: Сохранить
+Add: Добавить
+Autoservices: Автосервисы
+Add_autoservice: Добавить сервис
+Service: Сервисы
+Service: Сервис
+
+organization_info:
+    legal_form: Организационная форма
+    choose_legal_form: Выберите организационную форму
+    full_name: Полное наименование
+    registration_number: Регистрационный номер
+    inn: ИНН
+    kpp: КПП
+    legal_address: Юридический адрес
+    bank_account_number: р/с
+    correspondent_account: к/с
+    bank_code: БИК
+    bank: Банк
+    ceo: Директор
+    chief_accountant: Главный бухгалтер
+
+Profile: Профиль
+Logout: Выйти
+
+
+date:
+    now: 'только что'
+    minutes_ago: '00 минут назад'
+    about_an_hour_ago: 'около часа назад'
+    yesterday_at: 'вчера в 00'
+    month:
+        nominative.january: январь
+        nominative.february: февраль
+        nominative.march: март
+        nominative.april: апрель
+        nominative.may: май
+        nominative.june: июнь
+        nominative.july: июль
+        nominative.august: август
+        nominative.september: сентябрь
+        nominative.october: октябрь
+        nominative.november: ноябрь
+        nominative.december: декабрь
+        genitive.january: января
+        genitive.february: февраля
+        genitive.march: марта
+        genitive.april: апреля
+        genitive.may: мая
+        genitive.june: июня
+        genitive.july: июля
+        genitive.august: августа
+        genitive.september: сентября
+        genitive.october: октября
+        genitive.november: ноября
+        genitive.december: декабря
+
+carOwner:
+    cars: Машины
+    profile: Профиль
+    Requests: Заявки
+
+agentClient:
+    name: Имя
+    phone: Телефон
+    email: Email
+    submit: Создать

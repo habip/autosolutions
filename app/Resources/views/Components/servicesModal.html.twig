@@ -1,0 +1,71 @@
+{% set m_id = 'search_services_modal' %}
+{% if modal_id is defined %}{% set m_id = modal_id %}{% endif %}
+<div class="modal fade in services_modal" id="{{ m_id }}" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog modal-lg block">
+        <div class="modal-content">
+            <div class="block-header">
+                <ul class="block-options">
+                    <li><button data-dismiss="modal" type="button"><i class="si si-close"></i></button></li>
+                </ul>
+                <h2 class="remove-margin-b font-w300 push">Выбор услуг</h2>
+            </div>
+                <div class="block-content push-10-l push-10-r">
+                    <div class="row">
+                        {% set fs = 0 %}
+                        {% for group in serviceGroups %}{% for service in group.services %}{% set fs = fs+1 %}{% endfor %}{% set fs = fs-1 %}{% endfor %}
+                        {% if fs==0 %}
+                        {% for group in serviceGroups %}
+                            {% for service in group.services %}
+                                <div class="col-md-6 m_b_10" data-single-reason="{{group.reason.id}}">
+                                        <label class="css-input css-checkbox css-checkbox-primary row col-md-12">
+                                            <div class="col-md-2">
+                                                <input type="checkbox" data-service="{{service.id}}"><span></span>
+                                            </div>
+                                            <div class="col-md-10">
+                                                <h6 class="m_t_5 m_b_0">{{service.name}}</h6>
+                                            </div>
+                                        </label>
+                                </div>
+                            {% endfor %}
+                        {% endfor %}
+                        {% else %}
+                        <ul class="col-md-3 nav nav-pills nav-stacked push">
+                            {% for group in serviceGroups %}
+                            <li{% if loop.first %} class="active"{% endif %} data-reason="{{group.reason.id}}">
+                                <a data-toggle="pill" href="#search_services_modal_service_group_{{group.id}}">{{ group.name }}</a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        <div class="col-md-9 tab-content">
+                            {% for group in serviceGroups %}
+                            <div class="tab-pane fade {% if loop.first %} in active{% endif %}" id="search_services_modal_service_group_{{group.id}}">
+                                {% for service in group.services %}
+                                {% if loop.index is odd or loop.first %}
+                                <div class="row">
+                                {% endif %}
+                                <div class="form-group col-md-6">
+                                        <label class="css-input css-checkbox css-checkbox-primary row col-md-12">
+                                            <div class="col-md-2">
+                                                <input type="checkbox" data-service="{{service.id}}"><span></span>
+                                            </div>
+                                            <div class="col-md-10">
+                                                <h6>{{service.name}}</h6>
+                                            </div>
+                                        </label>
+                                </div>
+                                {% if loop.index is even or loop.last %}
+                                </div>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            <div class="modal-footer">
+                <div class="btn btn-primary add"><i class="fa fa-plus"></i> Выбрать</div>
+            </div>
+        </div>
+     </div>
+</div>

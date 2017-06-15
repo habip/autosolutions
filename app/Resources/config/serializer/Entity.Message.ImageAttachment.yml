@@ -1,0 +1,8 @@
+AppBundle\Entity\Message\ImageAttachment:
+  exclusion_policy: ALL
+  properties:
+    image:
+      expose: true
+    TYPE:
+      expose: true
+      serialized_name: type

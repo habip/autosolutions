@@ -1,0 +1,14 @@
+AppBundle\Entity\CarModel:
+  exclusion_policy: ALL
+  properties:
+    id:
+      expose: true
+    name:
+      expose: true
+    vehicleType:
+      expose: true
+    vehicleClass:
+      expose: true
+    brand:
+      expose:
+      groups: [car_model_brand]

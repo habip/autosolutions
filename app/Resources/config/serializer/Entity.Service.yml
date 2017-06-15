@@ -1,0 +1,14 @@
+AppBundle\Entity\Service:
+  exclusion_policy: ALL
+  properties:
+    id:
+      expose: true
+    name:
+      expose: true
+    group:
+      expose: true
+    position:
+      expose: true
+    serviceCosts:
+      expost: true
+      groups: [cost]

@@ -1,0 +1,254 @@
+{% extends '::newCabinetLayout.html.twig' %}
+{% block title %}Заявка #{{carOwnerRequest.id}}{% endblock %}
+{% block body %}
+{% from ':CarOwner:requests.html.twig' import status_label %} <!-- SubHeader =============================================== -->
+
+
+<section class="parallax-window" data-image-src="/assets/20170109/img/sub_header_350.jpg" data-natural-height="350" data-natural-width="1400" data-parallax="scroll" id="short">
+    <div id="subheader">
+        <div id="sub_content">
+            <h1>Заявка #{{carOwnerRequest.id}}</h1>
+
+
+            <p>от {{carOwnerRequest.addedTimestamp|date('d.m.y H:i')}}</p>
+
+
+            <p>{{ status_label(carOwnerRequest.status) }}</p>
+        </div>
+        <!-- End sub_content -->
+    </div>
+    <!-- End subheader -->
+</section>
+<!-- End section -->
+<!-- End SubHeader ============================================ -->
+<!-- Content ================================================== -->
+
+
+<div class="container margin_60_35">
+    <div class="row">
+        <div class="col-md-3">
+            <!--<p><a href="list_page.html" class="btn_side">Добавить авто</a></p>-->
+
+
+            <div class="box_style_1">
+                <ul id="cat_nav">
+                    <li>
+                        <a class="active" href="/app_dev.php/car-owner/requests/">Вернуться к списку заявок</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- End box_style_1 -->
+
+
+            <div class="box_style_2 hidden-xs" id="help">
+                <i class="icon_lifesaver"></i>
+
+                <h4>Нужна <span>Помощь?</span></h4>
+                <a class="phone" href="tel://004542344599">(843) 20-20-250</a> <small>Круглосуточно</small>
+            </div>
+        </div>
+
+
+        <div class="col-md-9">
+            <div class="box_style_2">
+                <h2 class="inner">Данные заявки</h2>
+
+
+                <div class="row">
+                    <div class="col-md-6 col-lg-6 text-center">
+                        <i class="si si-clock fa-2x"></i>
+
+                        <p>Время записи</p>
+                    </div>
+
+
+                    <div class="col-md-6 col-lg-6 text-left">
+                        <span style="margin-bottom:0px">на {{carOwnerRequest.carOwnerDate|date('d.m.y')}}</span>
+
+                        <h2 style="line-height:0px">{{carOwnerRequest.carOwnerDate|date('H:i')}}</h2>
+                    </div>
+                </div>
+
+                <hr>
+
+
+                <div class="row">
+                    <div class="col-md-6 col-lg-6 text-center">
+                        <i class="si si-wrench fa-2x"></i>
+
+                        <p>Автосервис</p>
+                    </div>
+
+
+                    <div class="col-md-6 col-lg-6 text-left">
+                        <strong><a class="_uppercase" data-carservice-id="{{ carOwnerRequest.carService.id }}" data-role="carservice-link" href="#">
+                        <h4><strong><strong><strong><strong><strong><strong>{{ carOwnerRequest.carService.name }}</strong></strong></strong></strong></strong></strong>
+                        </h4></a></strong>
+                    </div>
+                </div>
+
+                <hr>
+                {% if carOwnerRequest.entryTime is not null %}
+
+                <div class="row">
+                    <div class="col-md-6 col-lg-6 text-center">
+                        <i class="si si-clock fa-2x"></i>
+
+                        <p>Время заезда</p>
+                    </div>
+
+
+                    <div class="col-md-6 col-lg-6 text-left">
+                        <strong>{{carOwnerRequest.entryTime|date('H:i d.m.y')}}</strong>
+                    </div>
+                </div>
+
+                <hr>
+                {% endif %}
+
+                <div class="row">
+                    <div class="col-md-6 col-lg-6 text-center">
+                        <i class="si si-check fa-2x"></i>
+
+                        <p>Автомобиль</p>
+                    </div>
+
+
+                    <div class="col-md-6 col-lg-6 text-left">
+                        <strong><span class="_uppercase">{{ carOwnerRequest.car.brand.name }} {{ carOwnerRequest.car.model.name}} {{carOwnerRequest.car.number|slice(0,-3)}} {{carOwnerRequest.car.number|slice(-3,3)}}</span></strong>
+                    </div>
+                </div>
+
+                <hr>
+
+
+                <div class="row">
+                    {% set wcount = 0 %} {% set works = 0 %} {% for carOwnerRequestItem in carOwnerRequest.items %} {% if carOwnerRequestItem.type=='works' %} {% set wcount = wcount+1 %} {% set works = 1 %} {% endif %} {% endfor %} {% if wcount>0 %}
+
+                    <div class="col-lg-12 text-center push-20-t push-20">
+                        <h3>Выполненные работы</h3>
+                    </div>
+
+
+                    <div class="block-content">
+                        {% set wsum = 0 %}
+                        {% for carOwnerRequestItem in carOwnerRequest.items %}
+                        
+                            {% if carOwnerRequestItem.type=='works' %} {% set wsum = wsum+carOwnerRequestItem.sum %} {% endif %} 
+
+                        <table class="table table-striped table-header-bg text-center remove-margin-b">
+                            <thead>
+                                <tr>
+                                    <th class="col-md-8">Название</th>
+
+                                    <th class="col-md-2 text-center">Кол-во</th>
+
+                                    <th class="col-md-2 text-center text-center">Цена</th>
+                                </tr>
+                            </thead>
+
+
+                            <tbody>
+                                <tr>
+                                    <td>{{carOwnerRequestItem.name}}</td>
+
+                                    <td><strong>{{carOwnerRequestItem.quantity}}</strong>
+                                    </td>
+
+                                    <td><strong>{{carOwnerRequestItem.sum}} руб</strong>
+                                    </td>
+                                </tr>
+
+
+                                <tr class="active">
+                                    <td class="font-w700 text-uppercase text-right" colspan="2">Итого работ:</td>
+
+                                    <td class="font-w700 text-center">{{wsum}} руб.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+
+                    <div class="col-md-6 col-lg-6 text-center">
+                        <i class="si si-settings fa-2x"></i>
+
+                        <p>Заказанные услуги</p>
+                    </div>
+
+
+                    <div class="col-md-6 col-lg-6 font-s14 text-left">
+                        {% for service in carOwnerRequest.services %}
+
+                        <div class="push-5">
+                            <i class="fa fa-check push-5-r text-success"></i>{{ service.name }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <!-- End col-md-9-->
+    </div>
+    <!-- End row -->
+</div>
+<!-- End container -->
+<!-- End Content =============================================== -->
+
+
+<div aria-hidden="false" class="modal fade in" id="carservice" role="dialog" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="block block-themed block-split-header">
+                <div class="block-header bg-primary-dark">
+                    <ul class="block-options">
+                        <li><button data-dismiss="modal"><i class="si si-close"></i></button>
+                        </li>
+                    </ul>
+
+
+                    <h4 class="block-title">
+                    </h4>
+                </div>
+
+
+                <div class="block-content min-h-250">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} {% block js %} 
+<script>
+    {% if carOwnerRequest.status=='done' and carOwnerRequest.review is null %}
+        $(function() {
+            var review = $('#review');
+            review.data('request-id', {{ carOwnerRequest.id }} );
+            review.find('span[data-role=request-id]').html('{{ carOwnerRequest.id }}');
+            review.find('span[data-role=request-car]').html('{{ carOwnerRequest.car.brand.name ~ ' ' ~ carOwnerRequest.car.model.name ~ ' ' ~ carOwnerRequest.car.number }}');
+            review.find('span[data-role=request-date]').html('{{ carOwnerRequest.carOwnerDate | date('d.m.Y') }}');
+            $('#review').modal('show');
+        });
+    {% endif %}
+
+    $('[data-role=carservice-link]').click(function(event) {
+        var _this = $(this),
+        content = $('#carservice .block-content'),
+        modal = $('#carservice');
+
+        event.preventDefault();
+        content.addClass('opt-refresh');
+        modal.modal('show');
+
+        var showUrl = '{{path('_search_carservice')}}?id=00&view=true'.replace('00', _this.data('carservice-id'));
+        $.ajax({
+            url: showUrl,
+            success: function(data){
+                content.html(data);
+                content.removeClass('opt-refresh');
+            }
+        });
+    });
+</script> {% endblock %}

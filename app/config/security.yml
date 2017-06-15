@@ -1,0 +1,114 @@
+security:
+    encoders:
+        AppBundle\Entity\User:
+            algorithm: sha512
+        Symfony\Component\Security\Core\User\User: plaintext
+
+    role_hierarchy:
+        ROLE_USER_STATUS_MONITOR: [ROLE_USER]
+
+    providers:
+        users:
+            id: app.entity_user_provider
+        in_memory:
+            memory:
+                users:
+                    monitor: { password: "%monitor_password%", roles: ROLE_USER_STATUS_MONITOR }
+                    admin:
+                        password: "%admin_password%"
+                        roles: ROLE_ADMIN
+
+    firewalls:
+        dev:
+            pattern:  ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        gettoken:
+            pattern:  ^/api/get-token$
+            stateless: true
+            provider: users
+            gfreeau_get_jwt:
+                # this is the default config
+                username_parameter: username
+                password_parameter: password
+                post_only: true
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+
+        getmonitortoken:
+            pattern:  ^/api/monitor/get-token$
+            stateless: true
+            provider: in_memory
+            gfreeau_get_jwt:
+                # this is the default config
+                username_parameter: username
+                password_parameter: password
+                post_only: true
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+
+        monitor:
+            pattern: ^/api/monitor
+            provider: in_memory
+            lexik_jwt: ~
+
+        admin_login:
+            pattern: ^/admin/login(/?)$
+            security: false
+
+        admin_area:
+            pattern: ^/admin
+            provider: in_memory
+            context: autosolutions_admin_auth
+            form_login:
+                check_path: _admin_login_check
+                login_path: _admin_login
+                default_target_path: _admin_index
+            logout:
+                path:   _admin_logout
+                target: _main
+
+        company_registration:
+            pattern:  ^/company/registration(/|$)
+            context: autosolutions_auth
+            anonymous: ~
+
+        car_owner_login:
+            pattern:  ^/car-owner/login/$
+            security: false
+
+        car_owner_registration:
+            pattern:  ^/car-owner/(registration)(/|$)
+            context: autosolutions_auth
+            anonymous: ~
+
+        agent_registration:
+            pattern:  ^/agent/(registration)(/|$)
+            context: autosolutions_auth
+            anonymous: ~
+                
+        secured_area:
+            pattern: ^/
+            anonymous: ~
+            context: autosolutions_auth
+            lexik_jwt: ~
+            form_login:
+                check_path: _login_check
+                login_path: _login
+                default_target_path: _login_check
+            logout:
+                path:   _logout
+                target: _login
+
+
+
+    access_control:
+        - { path: ^/company/schedule, roles: ROLE_EMPLOYEE }
+        - { path: ^/company/company-services/|^/company/service/, roles: [ROLE_COMPANY, ROLE_EMPLOYEE]}
+        - { path: ^/company/(?!registration), roles: ROLE_COMPANY }
+        - { path: ^/car-owner/(?!registration), roles: ROLE_CAR_OWNER }
+        - { path: ^/agent/(?!registration), roles: ROLE_AGENT }
+        - { path: ^/api/car-services/\d+/reviews/$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/create-request/, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api(/|$), roles: ROLE_USER }
+        - { path: ^/admin, roles: ROLE_ADMIN }

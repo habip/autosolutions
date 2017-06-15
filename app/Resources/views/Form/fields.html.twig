@@ -1,0 +1,85 @@
+{% block form_row %}
+    <div {{ block('form_row_attributes') }}>
+        <label class="col-xs-12">{%if label is defined %}<h5>{{ label | trans }}</h5>{%endif%}</label>
+        <div class="col-xs-12">
+            {% set w_attr = {'class': 'form-control input-lg'} -%}
+            {%- if widget_attr is defined -%}
+                {% set w_attr = w_attr|merge(widget_attr) %}
+            {%- endif -%}
+            {{ form_widget(form, {'attr': w_attr}) }}
+            {% if form.vars.errors|length > 0 %}
+            <span class="help-block">{{ form_errors(form)}}</span>
+            {% endif %}
+        </div>
+    </div>
+{% endblock form_row %}
+
+{% block datetime_widget -%}
+    {% if widget == 'single_text' %}
+        <div id="{{ id }}_container" class="input-group date"{% if attr['data-date-format'] is defined %} data-date-format="{{ attr['data-date-format'] }}"{% endif %} {{ block('form_row_attributes') }}>
+            {% set type = 'text' %}
+            {{ block('form_widget_simple') }}
+            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+        </div>
+    {% else %}
+        {{- form_widget(form.date) -}}
+        {{- form_widget(form.time) -}}
+    {% endif %}
+{%- endblock datetime_widget %}
+
+{% block form_row_attributes -%}
+    id="{{ id }}_form_group" class="form-group row {% if form.vars.errors|length > 0 %} has-error{% endif %}"
+    {%- if form_row_attr is defined -%}
+    {%- for attrname, attrvalue in form_row_attr -%}
+        {{- " " -}}
+        {%- if attrvalue is sameas(true) -%}
+            {{- attrname }}="{{ attrname }}"
+        {%- elseif attrvalue is not sameas(false) -%}
+            {{- attrname }}="{{ attrvalue }}"
+        {%- endif -%}
+    {%- endfor -%}
+    {%- endif -%}
+{%- endblock form_row_attributes %}
+
+{% block captcha_widget %}
+{% if is_human %}
+-
+{% else %}
+{% spaceless %}
+    <div class="i_b c_4">
+        <a href="javascript:reload_{{ image_id }}();" title="{{ 'Renew'|trans({}, 'gregwar_captcha') }}"><img id="{{ image_id }}" src="{{ captcha_code }}" alt="" title="captcha" width="{{ captcha_width }}" height="{{ captcha_height }}" /></a>
+        {% if reload %}
+        <script type="text/javascript">
+            function reload_{{ image_id }}() {
+                var img = document.getElementById('{{ image_id }}');
+                img.src = '{{ captcha_code }}?n=' + (new Date()).getTime();
+            }
+        </script>
+        {% endif %}
+    </div>
+    <div class="i_b c_8">
+        {{ form_widget(form) }}
+    </div>
+{% endspaceless %}
+{% endif %}
+{% endblock %}
+
+{% block button_row -%}
+{{ form_widget(form) }}
+{%- endblock button_row %}
+
+{% block submit_widget -%}
+    {%- set type = type|default('submit') -%}
+    {%- if attr is defined -%}
+        {% if attr.class is not defined %}
+        {% set attr = attr|merge({'class': 'btn btn-primary'}) %}
+        {% endif %}
+    {%- else -%}
+        {% set attr = {'class': 'btn btn-primary'} %}
+    {%- endif -%}
+    <div class="row">
+        <div class="col-md-12">
+        {{ block('button_widget') }}
+        </div>
+    </div>
+{%- endblock submit_widget %}

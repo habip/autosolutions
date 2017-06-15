@@ -1,0 +1,24 @@
+    <div class="modal fade in" id="locality_choice"  role="dialog" aria-hidden="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="block block-themed">
+                    <div class="block-header bg-primary-dark">
+                        <ul class="block-options">
+                            <li>
+                                <button data-dismiss="modal"><i class="si si-close"></i></button>
+                            </li>
+                        </ul>
+                        <h4 class="block-title">Выберите город в котором вы находитесь</h4>
+                    </div>
+                    <div class="block-content min-h-250">
+                        {% set currentPath = path(app.request.attributes.get('_route'),app.request.attributes.get('_route_params')) %}
+                        <a href="#" data-request-post='{"locality":1}'><h4 class="push-10-l">Москва</h4></a>
+                        <hr>
+                        <a href="#" data-request-post='{"locality":2}'><h4 class="push-10-l">Санкт-Петербург</h4></a>
+                        <hr>
+                        <a href="#" data-request-post='{"locality":8}'><h4 class="push-10-l">Казань</h4></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

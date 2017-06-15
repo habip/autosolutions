@@ -1,0 +1,423 @@
+{% extends '::newCabinetLayout.html.twig' %}
+
+{% block title %}Мои автомобили{% endblock %}
+{% block head %}
+<!--    {{ parent() }}
+    {% stylesheets
+        '../app/Resources/public/css/jquery.fileupload.css'
+        '../app/Resources/public/css/progress.css'
+        '../app/Resources/public/css/jquery.ui.autocomplete.css'
+        '../app/Resources/public/js/plugins/bootstrap-datepicker/bootstrap-datepicker3.min.css'
+        %}
+	
+    <link rel="stylesheet" href="{{ asset_url }}" />
+	
+    {% endstylesheets %}
+-->		
+{% endblock head %}
+{% block body %}
+
+<!-- SubHeader =============================================== -->
+<section class="parallax-window" id="short" data-parallax="scroll" data-image-src="/assets/20170109/img/sub_header_350.jpg" data-natural-width="1400" data-natural-height="350">
+    <div id="subheader">
+    	<div id="sub_content">
+    	 <h1>Мой автомобиль</h1>
+         <p>Укажите данные своего авто или автомобилей.</p>
+         <p></p>
+        </div><!-- End sub_content -->
+	</div><!-- End subheader -->
+</section><!-- End section -->
+<!-- End SubHeader ============================================ -->
+
+
+
+<!-- Content ================================================== -->
+<div class="container margin_60_35">
+		<div class="row">
+
+		
+			<div class="col-md-1"></div>
+			<div class="col-md-10">				
+
+			<div class="box_style_2" id="order_process">
+					<h2 class="inner">Мои автомобили</h2>
+					
+					<p><a href="{{path('_car_owner_requests')}}" class="btn_1 hide">Добавить авто</a></p>						
+					
+					<table class="table table-striped cart-list">
+					<thead>
+					<tr>
+						<th>
+							 Марка, модель
+						</th>
+						<th>
+							 Год выпуска
+						</th>
+						<th>
+							 Госномер
+						</th>
+						<th>
+						</th>						
+					</tr>
+					</thead>
+					<tbody>
+					
+					
+					
+					{% for car in cars %}
+					
+					<tr>
+						<td>
+                        	<figure class="thumb_menu_list"><img src="/assets/20170109/img/menu-thumb-1.jpg" alt="thumb"></figure>
+							<a data-toggle="modal" data-target="#modal-car-edit-{{car.id}}"><h4 class="push-20-t">{{ car.brand.name }} {{ car.model.name }}</h4></a>
+						</td>
+						<td>
+							<strong>{{ car.year }}</strong>
+						</td>
+						<td>
+							<strong>{{ car.number }}</strong>
+						</td>						
+						<td class="options text-right">
+						
+                                    <a class="btn_1" href="{{path('_search_service', {car: car.id})}}">Создать заявку</a>
+                                    <a class="btn_listing" href="{{ path('_car_owner_car_delete', {id: car.id}) }}"><i class="icon-cancel"></i></a>
+						
+						<!--
+                        <div class="dropdown dropdown-options">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true"><i class="icon_plus_alt2"></i></a>
+                            <div class="dropdown-menu">
+							
+                                    <a class="btn btn-danger" data-toggle="modal" data-target="#modal-car-edit-{{car.id}}">Редактировать</a>
+                                    <a class="btn btn-default" href="{{path('_search_service', {car: car.id})}}">Создать заявку на ремонт</a>
+									<hr/>												
+                                    <a class="btn btn-default pull-right delete-car-btn" href="{{ path('_car_owner_car_delete', {id: car.id}) }}"><i class="fa fa-times text-danger push-5-l push-5-r"></i> <span class="hidden-xs">Удалить</span></a>
+
+                            </div>
+                        </div>
+						-->
+						
+                               <div class="modal fade car_edit" id="modal-car-edit-{{car.id}}" data-car="{{car.id}}" tabindex="-1" role="dialog" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="block block-themed block-transparent remove-margin-b">
+                                                <div class="block-header">
+                                                    <ul class="block-options">
+                                                        <li>
+                                                            <button data-dismiss="modal" type="button"><i class="icon-cancel"></i></button>
+                                                        </li>
+                                                    </ul>
+                                                    <h3 class="text-center">Редактировать автомобиль "{{car.brand.name}} {{car.model.name}}"</h3>
+								
+                                                </div>
+                                                <div class="block-content">
+                                                    <form action="{{ path('_car_owner_car_edit', {id: car.id}) }}" method="POST">
+                                                        <div class="form-horizontal">
+                                                            <div class="form-group">
+                                                                <label class="col-md-3">Фотография</label>
+                                                                <div class="col-md-7">
+                                                                    <div class="upload_box">
+                                                                        <img src="{% if car.images is not empty %}{{ thumb(car.images[0], 275, 155, true) }}{% else %}/img/default_img.jpg{% endif %}">
+                                                                        <span class="btn btn-danger fileinput-button push-10-t">
+                                                                            <span>Загрузить другое изображение</span>
+                                                                            <input class="image-upload-button" type="file" name="file" data-url="{{ oneup_uploader_endpoint('image') }}">
+                                                                        </span>
+                                                                        <div class="file_list"></div>
+                                                                        {% if car.images is not empty %}<input type="hidden" name="car[images][]" value="{{ car.images[0].id }}">{% endif %}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="col-md-3">Марка</label>
+                                                                <div class="col-md-7">
+                                                                    <input type="text" class="form-control" data-search="{{path('_search_brand')}}" name="car[brand]" value="{{car.brand.name}}" data-value="{{car.brand.id}}">
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="col-md-3">Модель</label>
+                                                                <div class="col-md-7">
+                                                                    <input type="text" class="form-control" name="car[model]" data-search="{{path('_search_model')}}" data-related="car[brand]" data-related-param="brand" value="{{car.model.name}}" data-value="{{car.model.id}}">
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="col-md-3">Год</label>
+                                                                <div class="col-md-7">
+                                                                    <input type="text" class="form-control _input_year" name="car[year]" value="{{car.year}}">
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="col-md-3">Пробег</label>
+                                                                <div class="col-md-7">
+                                                                    <input type="text" class="form-control _input_mileage" name="car[mileage]" value="{{car.mileage}}">
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="col-md-3">Гос.номер</label>
+                                                                <div class="col-md-7">
+                                                                    <input type="text" class="form-control _input_car_number" name="car[number]" value="{{car.number}}">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <a class="btn btn-primary _save">Сохранить</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+						
+						
+                    </td>
+					</tr>
+					
+					{% endfor %}
+					
+
+					</tbody>
+					</table>					
+					
+
+			</div><!-- End box_style_1 -->
+			<div class="col-md-1"></div>
+
+
+			</div><!-- End col-md-9-->
+
+
+            
+
+            
+		</div><!-- End row -->
+</div><!-- End container -->
+<!-- End Content =============================================== -->
+
+
+
+
+</div>
+
+<div class="modal fade in" id="delete-car-confirm" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="block block-themed">
+                <div class="block-header bg-primary-dark">
+                    <ul class="block-options">
+                        <li>
+                            <button data-dismiss="modal" type="button" class="modal_close">×</button>
+                        </li>
+                    </ul>
+                    <h3 class="block-title">Запрос подтверждения</h3>
+                </div>
+                <div class="block-content">
+                    <h3>Вы действительно хотите удалить автомобиль?</h3>
+                </div>
+                <div class="modal-footer">
+                    <a class="btn btn-success push-10 confirm">Удалить</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{ include(':Components:addCarModal.html.twig') }}
+
+{% endblock %}
+{% block js %}
+    {% javascripts
+        '../app/Resources/public/js/jquery.ui.localityinput.js'
+        '../app/Resources/public/js/jquery.iframe-transport.js'
+        '../app/Resources/public/js/jquery.fileupload.js'
+        '../app/Resources/public/js/image-upload.js'
+        %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    <script>
+        $('.car_edit ._save').click(function(event){
+            event.preventDefault();
+            var _modal = $(this).closest('.modal'),
+            form = _modal.find('form');
+            $.ajax({
+                headers: {Accept: 'application/json'},
+                url: form.prop('action'),
+                method: form.attr('method'),
+                data: form.serialize(),
+                success: function(data){
+                    $('.car_edit').modal('hide');
+                    location.reload();
+                }
+            });
+        });
+    </script>
+    <script>
+    $(function () {
+        var box;
+        var uploadProgressBar;
+        var filesCount = 0;
+        var doneFilesCount = 0;
+        var files = [];
+        var cleanup = function() {
+            filesCount = 0;
+            doneFilesCount = 0;
+            files = [];
+        };
+        $('.image-upload-button').fileupload({
+            dataType: 'json',
+            add: function(e, data) {
+                box = $(this).closest('.upload_box');
+                filesCount += data.files.length;
+                files.push(data);
+                data.context =
+                    $('<div class="progress progress-mini">'+
+                        '<div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%"></div>'+
+                       '</div>');
+                box.find('.file_list').html('').append(data.context);
+                data.sizeCell = $('.size', data.context);
+                data.statusCell = $('.upload-status', data.context);
+                data.progressBar = $('.progress .progress-bar', data.context);
+                if (data.autoUpload || (data.autoUpload !== false &&
+                        $(this).fileupload('option', 'autoUpload'))) {
+                    data.process().done(function () {
+                        data.submit();
+                    });
+                }
+            },
+            start: function(e) {
+                $(this).closest('.fileinput-button').css({'display':'none'});
+                uploadProgressBar = $(this).closest('.upload_box').find('.progress-bar');
+                uploadProgressBar.css('width', 0);
+                box.find('.file_list').css({'display':'block'});
+            },
+            progress: function(e, data) {
+                var percent = parseInt(data.loaded / data.total * 100, 10);
+                data.progressBar.css('width', percent + "%").attr('aria-valuenow', percent).find('.sr-only').text(percent + '% Complete');
+                data.sizeCell.html(data.total + "/" + data.loaded + "B");
+            },
+            progressall: function(e, data) {
+                //console.log('progress', e, data);
+                var percent = parseInt(data.loaded / data.total * 100, 10);
+                uploadProgressBar.css('width', percent + "%").attr('aria-valuenow', percent).find('.sr-only').text(percent + '% Complete');
+            },
+            done: function (e, data) {
+                var list = $('.photo-list-content');
+                var imgContainer = $(this).closest('div');
+                var img = imgContainer.find('img');
+                var input = imgContainer.find('input[type="hidden"]');
+                $.each(data.result.files, function (index, file) {
+                    if (!file.error) {
+                        if (input.length) {
+                            input.val(file.id);
+                        } else {
+                            imgContainer.append($('<input type="hidden" name="car[images][]" value="' + file.id + '">'));
+                        }
+                        if (img.length) {
+                            img.attr('src', file.thumbnailUrl).attr('style', 'background-image:url(' + file.thumbnailUrl + ')');
+                        } else {
+                            imgContainer.append($('<img src="' + file.thumbnailUrl + '" photo="' + file.thumbnailUrl + '" style="background-image:url(' + file.thumbnailUrl + ')" data-id="' + file.id + '"/>'));
+                        }
+                        data.statusCell.html('<span class="glyphicon glyphicon-ok" style="color: #3c763d;"></span>');
+                    } else {
+                        data.statusCell.html('<span style="color: #a94442;">'+file.error+'</span>');
+                    }
+                });
+                doneFilesCount++;
+                if (doneFilesCount == filesCount) {
+                    cleanup();
+                    box.find('.file_list').css({'display':'none'});
+                    $(this).closest('.fileinput-button').css({'display':'block'});
+                }
+            },
+            fail: function(e, data) {
+                doneFilesCount++;
+                data.statusCell.html('<span style="color: #a94442;">'+data.errorThrown+'</span>');
+                if (doneFilesCount == filesCount) {
+                    cleanup();
+                }
+            },
+            stop: function(e) {
+                cleanup();
+            }
+        });
+    });
+
+    $(function() {
+        var
+        addModal,
+        addBtn,
+        addForm,
+        errorMsgBox,
+        addCar = function() {
+            addBtn.prop('disabled', true);
+            addBtn.find('.fa').show();
+            errorMsgBox.addClass('hide');
+            addForm.find('.form-group').removeClass('has-error');
+            addForm.find('.form-group .help-block').html('');
+
+            $.ajax({
+                headers: {Accept: 'application/json'},
+                method: addForm.attr('method'),
+                url: addForm.prop('action'),
+                data: addForm.serialize(),
+                success: function(data) {
+                    addModal.modal('hide');
+                    window.location.reload();
+                },
+                error: function(xhr) {
+                    var field, fieldName, input, errorHint, html;
+                    if (xhr.responseJSON && xhr.responseJSON.errors && xhr.responseJSON.message) {
+                        errorMsgBox.html('Ошибки в заполнении формы');
+                        errorMsgBox.removeClass('hide');
+
+                        for (fieldName in xhr.responseJSON.errors.children) {
+                            field = xhr.responseJSON.errors.children[fieldName];
+                            if (field.errors && field.errors.length) {
+                                input = addForm.find('[name*="\\['+fieldName+'\\]"]');
+                                input.closest('.form-group').addClass('has-error');
+                                errorHint = input.closest('div').find('.help-block');
+                                if (!errorHint.length) {
+                                    errorHint = $('<div class="help-block"></div>');
+                                    input.closest('div').append(errorHint);
+                                }
+                                html = '';
+                                $.each(field.errors, function(index, message) {
+                                    html += message + '<br>';
+                                });
+                                errorHint.html(html);
+                            }
+                        }
+                    } else {
+                        errorMsgBox.html(xhr.statusText);
+                        errorMsgBox.removeClass('hide');
+                    }
+                },
+                complete: function() {
+                    addBtn.prop('disabled', false);
+                    addBtn.find('.fa').hide();
+                }
+            });
+        };
+
+        addModal = $('#car_add');
+        addBtn = addModal.find('._add');
+        addForm = addModal.find('form');
+        errorMsgBox = addModal.find('.alert.alert-danger');
+
+        addBtn.click(addCar);
+
+    });
+
+    $(function() {
+        $('.delete-car-btn').click(function() {
+            var $this = $(this),
+            url = $this.data('url');
+
+            $('#delete-car-confirm').modal('show');
+
+            $('#delete-car-confirm .confirm').off().on('click', function(event) {
+                event.preventDefault();
+                window.location = url;
+            });
+        });
+    });
+        </script>
+{% endblock %}

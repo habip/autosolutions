@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title> </title>
+    {% stylesheets
+        '../app/Resources/public/build/union.css'
+        '../app/Resources/public/build/add.css'
+        %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
+  </head>
+  <body class="_login_page">
+
+    <section class="_login_form_wrap">
+        <form class="_login_form _custom_form" action="{{ path("_login_check") }}"  method="post">
+            <div class="_login_form_content _t_a_c">
+                <div class="_p_b_30 _M_size _neg_side_m_30">Вход для автовладельца</div>
+                {% if error %}<div class="alert _error">{{ 'login.bad_credentials' | trans }}</div>{% endif %}
+                {% if isDisabled %}<div class="alert">{{ 'login.disabled' | trans }}</div>{% endif %}
+                <label class="_login">
+                    <input type="text" name="_username"></input>
+                </label>
+                <label class="_pass">
+                    <input type="password" name="_password"></input>
+                </label>
+                <button class="_custom_btn _btn_block">Войти в систему</button>
+                <a href="{{path('_car_owner_registration')}}" class="_login_link">Регистрация в системе</a>
+            </div>
+        </form>
+    </section>
+
+
+    {% javascripts
+        '../app/Resources/public/build/union.js'
+        %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+  </body>
+</html>

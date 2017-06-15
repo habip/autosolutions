@@ -1,0 +1,14 @@
+AppBundle\Entity\Image:
+  exclusion_policy: ALL
+  properties:
+    id:
+      expose: true
+      serialized_name: id
+    url:
+      expose: true
+    thumbs:
+      expose: true
+  virtual_properties:
+    getThumb100x100:
+      serialized_name: thumb100x100
+      groups: [thumb100x100]

@@ -1,0 +1,7 @@
+AppBundle\Entity\Highway:
+  exclusion_policy: ALL
+  properties:
+    id:
+      expose: true
+    name:
+      expose: true

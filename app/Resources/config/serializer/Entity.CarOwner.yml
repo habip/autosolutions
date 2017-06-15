@@ -1,0 +1,16 @@
+AppBundle\Entity\CarOwner:
+  exclusion_policy: ALL
+  properties:
+    id:
+      expose: true
+    firstName:
+      expose: true
+    lastName:
+      expose: true
+    gender:
+      expose: true
+    phone:
+      expose: true
+      access_type: public_method
+    locality:
+      expose: true

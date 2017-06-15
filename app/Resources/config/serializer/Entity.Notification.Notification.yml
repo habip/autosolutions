@@ -1,0 +1,21 @@
+AppBundle\Entity\Notification\Notification:
+  exclusion_policy: ALL
+  properties:
+    id:
+      expose: true
+    createdTimestamp:
+      expose: true
+    request:
+      expose: true
+    type:
+      expose: true
+    actions:
+      expose: true
+    choises:
+      expose: true
+    message:
+      expose: true
+    author:
+      expose: true
+    flags:
+      expose: true

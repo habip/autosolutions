@@ -1,0 +1,35 @@
+{% extends '::mainLayout.html.twig' %}
+
+{% block title %}{{ 'registration.specify_registration_data'|trans }}{% endblock %}
+
+{% block body %}
+    {{ include(':Components:title.html.twig', { title: 'Подтвердите номер телефона' }) }}
+    
+    <div class="content content-boxed">
+        <div class="row">
+            <div class="col-sm-10 col-lg-10 col-lg-offset-1">
+            
+                <div class="block block-themed">
+                    <div class="content bg-gray-lighter">
+                    {{ form_start(form, { 'attr' : { class: '_col_12', style: 'margin: 0 auto;' } }) }}
+                    <div class="form-group" id="car_owner_registration_phone_form_group">
+                        <label class="col-xs-12">Телефон</label>
+                        <div class="col-xs-12">
+                            <span class="badge badge-success h4 text-white push-10 push-10-t"><i class="fa fa-check"></i> {{ phone_number_format(carOwner.user.phone, 'NATIONAL') }}</span>
+                        </div>
+                    </div>
+                    {{ form_row(form.code) }}
+                    <div class="form-group text-center">
+                        <button class="btn btn-danger push-20-t" type="submit">Подтвердить</button>
+                    </div>
+                    <div class="form-group text-center">
+                        <a href="{{ path('_car_owner_resend_code') }}" class="text-center">Я не получил СМС, отправить еще раз</a>
+                    </div>	
+                    {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

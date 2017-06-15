@@ -1,0 +1,26 @@
+{% extends '::reg.html.twig' %}
+
+{% block title %}{{ 'registration.specify_registration_data'|trans }}{% endblock %}
+
+{% block body %}
+
+    {{ form_start(form, { 'attr' : { class: '_col_12', style: 'margin: 0 auto;' } }) }} 
+    {{ form_row(form.phone) }}
+		<div class="form-group text-center">
+			<button class="btn btn-danger push-20-t" type="submit">Получить код</button>
+		</div>
+    {{ form_end(form) }}
+
+{% endblock %}
+
+
+{% block js %}
+        {% javascripts
+            '../app/Resources/public/js/jquery-ui.min.js'
+            '../app/Resources/public/js/jquery.ui.autocomplete.min.js'
+            '../app/Resources/public/js/jquery.ui.localityinput.js'
+            %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+{% endblock %}
+

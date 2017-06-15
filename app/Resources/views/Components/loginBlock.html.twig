@@ -1,0 +1,23 @@
+{% if app.user.carOwner.id is defined  %}
+    <div class="btn-group">
+        <div class="btn btn-default btn-image dropdown-toggle" data-toggle="dropdown" type="button">
+            <img src="/img/avatars/avatar10.jpg"> {{app.user.carOwner.firstName}}
+            <span class="caret"></span>
+        </div>
+        
+        <ul class="dropdown-menu dropdown-menu-right bg-primary-dark" style="border-color: #000 !important">
+            <li class="dropdown-header">{{app.user.carOwner.firstName}} {{app.user.carOwner.lastName}}</li>
+            <li><a href="{{ path('_car_owner_main') }}">Мой кабинет</a></li>
+            <li><a href="{{ path('_car_owner_requests') }}">Мои заявки</a></li>
+            <li><a href="{{ path('_car_owner_profile') }}">Мои данные</a></li>
+            <li><a href="{{ path('_car_owner_cars') }}">Мои автомобиль</a></li>
+            <li><a href="{{ path('_car_owner_downloads') }}">Скачать приложение</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="{{path('_logout')}}">Выйти</a></li>
+        </ul>
+    </div>
+{% else %}
+    <a class="btn text-white" href="{{path('_login')}}">
+        <i class="fa fa-fw fa-user"></i> <span class="hidden-xs">Вход в систему</span>
+    </a>
+{% endif %}

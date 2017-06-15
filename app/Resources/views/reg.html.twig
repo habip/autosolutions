@@ -1,0 +1,151 @@
+ <!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> </title>
+<!--     <link href='https://fonts.googleapis.com/css?family=Fira+Sans:400,300,500,700&subset=latin,cyrillic' rel='stylesheet' type='text/css'> -->
+        {% stylesheets
+            '../app/Resources/public/css/font-awesome.css'
+            '../app/Resources/public/css/bootstrap.min.css'
+            '../app/Resources/public/js/plugins/bootstrap-datepicker/bootstrap-datepicker3.min.css'
+            '../app/Resources/public/css/oneui.min.css'
+            '../app/Resources/public/css/themes/city.min.css'
+            '../app/Resources/public/build/union.css'
+            '../app/Resources/public/build/modal.css'
+            '../app/Resources/public/css/style.css'
+            '../app/Resources/public/css/autosolutions_adaptive.css'
+            %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+        {% endstylesheets %}
+        {% block head %}{% endblock %}
+
+        <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
+  </head>
+  <body>
+
+
+    <div  class="sidebar-l sidebar-o side-scroll header-navbar-fixed">
+
+        <!-- Main Container -->
+        <main id="main-container" class="_page_content_col">
+	
+	
+        <!-- Register Content -->
+        <div class="content overflow-hidden">
+            <div class="row">
+                <div class="col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-4 col-lg-offset-4">
+                    <!-- Register Block -->
+                    <div class="_login_block block block-themed animated fadeIn">
+                        <div class="block-header bg-primary-dark">
+                            <ul class="block-options">
+                                <li>
+                                    <a href="#" data-toggle="modal" data-target="#modal-terms">Авторизация</a>
+                                </li>
+                                <li>
+                                    <a href="/app_dev.php/agents/login" data-toggle="tooltip" data-placement="left" title="Log In"><i class="si si-login"></i></a>
+                                </li>
+                            </ul>
+                            <h3 class="block-title">Регистрация</h3>
+                        </div>
+
+                        <div class="block-content block-content-full block-content-narrow">
+                                <div class="text-center push-50 push-20-t">
+                                    <a href="/">
+                                        <img src="/img/carservice24.png">
+                                    </a>
+                                </div>	
+								
+								<hr/>								
+		
+								{% block body %}{% endblock %}
+
+                        </div>
+                    </div>
+                    <!-- END Register Block -->
+                </div>
+            </div>
+        </div>
+        <!-- END Register Content -->
+
+        </main>
+        <!-- END Main Container -->
+			
+	</div>		
+			
+
+    <div id="error_required" class="modal_main">
+        <div class="modal_wall"></div>
+        <div class="modal_box">
+            <div class="modal_body">
+                <h1 class="_custom_header">Ошибка</h1>
+                <p class="_custom_header">Заполните обязательные поля что бы продолжить</p>
+                <div class="_row">
+                    <div class="_col _col_12 _t_a_r">
+                        <a class="_button _orange modal_close">Закрыть</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    {% javascripts
+        '../app/Resources/public/js/oneui.min.js'
+        '../app/Resources/public/js/moment.min.js'
+        '../app/Resources/public/js/jquery.ui.autocomplete.min.js'
+        '../app/Resources/public/js/jquery.inputmask.bundle.js'
+        '../app/Resources/public/js/plugins/bootstrap-datepicker/bootstrap-datepicker.js'
+        '../app/Resources/public/build/union.js'
+        '../app/Resources/public/build/add.js'
+        '../app/Resources/public/build/modal.js'
+        '../app/Resources/public/js/jquery.range-stars.js'
+        %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    {% if app.user.carOwner.id is defined  %}
+        {% javascripts
+            '../app/Resources/public/js/sockjs-1.0.3.js'
+            '../app/Resources/public/js/queue.js'
+            '../app/Resources/public/js/notifications.js'
+        %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+    {% endif %}
+
+    {{ include(':Components:api.html.twig') }}
+
+    {% block js %}{% endblock %}
+   <script>
+   (function ($) {
+      $(function () {
+            $("#localities a").click(function(event){
+                event.preventDefault();
+                $("#localities form input").val($(this).data("value"));
+                $("#localities form").submit();
+            });
+
+            $("#registration").on("submit", function (event) {
+                document.location.href = "{{ path('_company_registration') }}";
+                event.preventDefault();
+            });
+
+
+            $(window).scroll(function () {
+
+                $("html, body").css({"backgroundPosition": "center 0"});
+
+                if ( $("#navbar").hasClass("affix") ) {
+                   $("html, body").css({"backgroundPosition": "center 69px"});
+                   $("#registration").find("button").text("Войти");
+                } else {
+                   $("html, body").css({"backgroundPosition": "center 200px"});
+                   $("#registration").find("button").text("Войти в систему");
+                }
+            });
+
+      });
+   }(jQuery));
+   </script>
+  </body>
+</html>

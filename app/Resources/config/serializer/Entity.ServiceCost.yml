@@ -1,0 +1,11 @@
+AppBundle\Entity\ServiceCost:
+  exclusion_policy: ALL
+  properties:
+    id:
+      expose: true
+    vehicleType:
+      expose: true
+    cost:
+      expose: true
+    duration:
+      expost: true

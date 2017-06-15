@@ -1,0 +1,102 @@
+AppBundle\Entity\CarService:
+  exclusion_policy: ALL
+  properties:
+    id:
+      expose: true
+    name:
+      expose: true
+    company:
+      expose: true
+    locality:
+      expose: true
+    district:
+      expose: true
+    station:
+      expose: true
+    highway:
+      expose: true
+    streetAddress:
+      expose: true
+    phone:
+      expose: true
+    director:
+      expose: true
+    description:
+      expose: true
+    workingHours:
+      expose: true
+      
+    #working hours
+    is24Hrs:
+      expose: true
+    monStart:
+      expose: true
+    monEnd:
+      expose: true
+    isMonDayOff:
+      expose: true
+    tueStart:
+      expose: true
+    tueEnd:
+      expose: true
+    isTueDayOff:
+      expose: true
+    wedStart:
+      expose: true
+    wedEnd:
+      expose: true
+    isWedDayOff:
+      expose: true
+    thuStart:
+      expose: true
+    thuEnd:
+      expose: true
+    isThuDayOff:
+      expose: true
+    friStart:
+      expose: true
+    friEnd:
+      expose: true
+    isFriDayOff:
+      expose: true
+    satStart:
+      expose: true
+    satEnd:
+      expose: true
+    isSatDayOff:
+      expose: true
+    sunStart:
+      expose: true
+    sunEnd:
+      expose: true
+    isSunDayOff:
+      expose: true
+
+      
+      
+    latitude:
+      expose: true
+    longitude:
+      expose: true
+    isOfficial:
+      expose: true
+    isBlocked:
+      expose: true
+      groups: [admin]
+    servedCarBrands:
+      expose: true
+      groups: [admin]
+    serviceGroups:
+      expose: true
+      groups: [admin]
+      
+    image:
+      expose: true
+      
+      
+    timeInterval:
+      expose: true
+
+    isSchedulable:
+      expose: true
+      access_type: public_method

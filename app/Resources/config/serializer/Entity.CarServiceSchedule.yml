@@ -1,0 +1,15 @@
+AppBundle\Entity\CarServiceSchedule:
+  exclusion_policy: ALL
+  properties:
+    id:
+      expose: true
+    post:
+      expose: true
+    startTime:
+      expose: true
+    endTime:
+      expose: true
+    carOwnerRequest:
+      expose: true
+      groups: [request]
+      

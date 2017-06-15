@@ -1,0 +1,78 @@
+{
+    "name" : "www.data/autosolutions.project",
+    "license" : "proprietary",
+    "type" : "project",
+    "autoload" : {
+        "psr-4" : {
+            "" : "src/",
+            "SymfonyStandard\\" : "app/SymfonyStandard/"
+        }
+    },
+    "require" : {
+        "php" : ">=5.3.9",
+        "symfony/symfony" : "2.7.*",
+        "doctrine/orm" : "~2.2,>=2.2.3",
+        "doctrine/doctrine-bundle" : "~1.4",
+        "symfony/assetic-bundle" : "~2.3",
+        "symfony/swiftmailer-bundle" : "~2.3",
+        "symfony/monolog-bundle" : "~2.4",
+        "sensio/distribution-bundle" : "~4.0",
+        "sensio/framework-extra-bundle" : "~3.0,>=3.0.2",
+        "incenteev/composer-parameter-handler" : "~2.0",
+        "doctrine/migrations" : "dev-master",
+        "doctrine/doctrine-migrations-bundle" : "dev-master",
+        "overblog/thrift-bundle" : "*",
+        "gregwar/captcha-bundle" : "dev-master#29610bb",
+        "gregwar/image-bundle" : "dev-master",
+        "kriswallsmith/buzz" : "*",
+        "friendsofsymfony/rest-bundle" : "~1.7",
+        "jms/serializer-bundle" : "*",
+        "infinite-networks/form-bundle" : "dev-master",
+        "bacon/bacon-qr-code" : "dev-master",
+        "oneup/uploader-bundle" : "1.*@dev",
+        "knplabs/knp-gaufrette-bundle" : "*@dev",
+        "lexik/jwt-authentication-bundle" : "@stable",
+        "gfreeau/get-jwt-bundle" : "dev-master",
+        "knplabs/knp-snappy-bundle": "dev-master",
+        "misd/phone-number-bundle": "1.*",
+        "rollerworks/password-strength-bundle": "~1.5",
+        "creof/doctrine2-spatial": "~1",
+        "friendsofsymfony/jsrouting-bundle": "*"
+        
+    },
+    "require-dev" : {
+        "sensio/generator-bundle" : "~2.3",
+        "debesha/doctrine-hydration-profiler-bundle" : "~1.0@dev"
+    },
+    "scripts" : {
+        "post-install-cmd" : [
+            "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
+            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
+            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
+            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
+            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile",
+            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::removeSymfonyStandardFiles",
+            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::prepareDeploymentTarget"
+        ],
+        "post-update-cmd" : [
+            "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
+            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
+            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
+            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
+            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile",
+            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::removeSymfonyStandardFiles",
+            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::prepareDeploymentTarget"
+        ]
+    },
+    "config" : {
+        "bin-dir" : "bin"
+    },
+    "extra" : {
+        "symfony-app-dir" : "app",
+        "symfony-web-dir" : "web",
+        "symfony-assets-install" : "relative",
+        "incenteev-parameters" : {
+            "file" : "app/config/parameters.yml"
+        }
+    }
+}

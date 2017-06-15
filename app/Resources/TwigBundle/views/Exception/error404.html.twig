@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<!--[if IE 9]>         <html class="ie9 no-focus" lang="ru"> <![endif]-->
+<!--[if gt IE 9]><!--> <html class="no-focus" lang="ru"> <!--<![endif]-->
+<head>
+<meta charset="utf-8">
+<title>Страница не найдена</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1.0">
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400italic,600,700%7COpen+Sans:300,400,400italic,600,700">
+        {% stylesheets
+            '../app/Resources/public/oneui/css/bootstrap.min.css'
+            '../app/Resources/public/oneui/css/oneui.css'
+            %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+        {% endstylesheets %}
+</head>
+<body><div class="content bg-white text-center pulldown overflow-hidden">
+<div class="row">
+<div class="col-sm-6 col-sm-offset-3">
+<h1 class="font-s128 font-w300 text-city animated flipInX">404</h1>
+<h2 class="h3 font-w300 push-50 animated fadeInUp">Страница которую вы искали не найдена..</h2>
+<p>Попробуйте начать с <a href="{{ path('_main') }}">главной страницы</a>.</p>
+</div>
+</div>
+</div>
+    {% javascripts
+        '../app/Resources/public/oneui/js/oneui.min.js'
+        %}
+        <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+</body>
+</html>

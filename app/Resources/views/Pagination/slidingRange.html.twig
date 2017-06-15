@@ -1,0 +1,10 @@
+        <ul class="pagination">
+        {% set pp = 0 %}
+        {% for page in pages %}
+            {% if pp + 1 != page %}
+            <li class='disabled'><span>..</span></li>
+            {% endif %}
+            <li{% if currentPage == page %} class="active"{% endif %}><a href="{{ path(route, routeParams|merge({ (pageParam) : page })) }}">{{ page }}</a></li>
+            {% set pp = page %}
+        {% endfor %}
+        </ul>

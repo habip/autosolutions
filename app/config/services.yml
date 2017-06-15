@@ -1,0 +1,247 @@
+# Learn more about services, parameters and containers at
+# http://symfony.com/doc/current/book/service_container.html
+parameters:
+#    parameter_name: value
+    app.registration.confirmation.template: :Company:confirmationEmail.html.twig
+    app.resetting.reset.template: :Resetting:email.html.twig
+    app.registration.confirmation.from_email: admin@localhost
+    app.resetting.reset.from_email: admin@localhost
+
+services:
+    security.authentication.success_handler:
+            class:  AppBundle\Handler\AuthenticationSuccessHandler
+            arguments:  ['@security.http_utils', {}, '@router', '@doctrine.orm.entity_manager']
+
+    app.entity_user_provider:
+        class: AppBundle\Security\User\EntityUserProvider
+        arguments:
+            - @doctrine.orm.entity_manager
+            - @libphonenumber.phone_number_util
+
+    app.form.type.autocomplete:
+        class: AppBundle\Form\Type\AutocompleteType
+        tags:
+            - { name: form.type, alias: autocomplete }
+
+    app.form.type.phone:
+        class: AppBundle\Form\Type\PhoneType
+        tags:
+            - { name: form.type, alias: phone }
+
+    app.form.type.car_number:
+        class: AppBundle\Form\Type\CarNumberType
+        tags:
+            - { name: form.type, alias: car_number }
+            
+    app.mailer.twig_swift:
+        class: AppBundle\Mailer\TwigSwiftMailer
+        arguments:
+            - @mailer
+            - @router
+            - @twig
+            - { template: { confirmation: %app.registration.confirmation.template%, resetting: %app.resetting.reset.template%}, from_email: { confirmation: %app.registration.confirmation.from_email%, resetting: %app.resetting.reset.from_email% } }
+        
+    app.listener.email_confirmation:
+        class: AppBundle\EventListener\EmailConfirmationListener
+        tags: 
+            - { name: kernel.event_subscriber }
+        arguments:
+            - @app.mailer.twig_swift
+            
+    app.thrift.handler.service:
+        class: IIT\Intergrid\OnGridService
+        arguments: [@service_container]
+    app.thrift.handler.backend_service:
+        class: IIT\Intergrid\OnGridBackendService
+        arguments: [@service_container]
+
+    app.message_manager:
+        class: AppBundle\EntityManager\MessageManager
+        arguments:
+            - @doctrine.orm.entity_manager
+    
+    security.access.dialog_voter:
+        class: AppBundle\Security\Authorization\Voter\DialogVoter
+        public: false
+        tags:
+            - { name: security.voter }
+
+    security.access.message_voter:
+        class: AppBundle\Security\Authorization\Voter\MessageVoter
+        public: false
+        tags:
+            - { name: security.voter }
+
+    security.access.review_voter:
+        class: AppBundle\Security\Authorization\Voter\ReviewVoter
+        public: false
+        tags:
+            - { name: security.voter }
+
+    security.access.car_owner_request_voter:
+        class: AppBundle\Security\Authorization\Voter\CarOwnerRequestVoter
+        public: false
+        tags:
+            - { name: security.voter }
+
+    security.access.car_service_schedule_voter:
+        class: AppBundle\Security\Authorization\Voter\CarServiceScheduleVoter
+        public: false
+        tags:
+            - { name: security.voter }
+
+    app.uniqid_namer:
+        class: AppBundle\Uploader\Naming\UniqidNamer
+        arguments:
+            - @security.token_storage
+            - @security.authorization_checker
+            
+    app.upload_listener:
+        class: AppBundle\EventListener\UploadListener
+        tags:
+            - { name: kernel.event_subscriber }
+        arguments:
+            - @doctrine
+            - @logger
+            - @security.token_storage
+            - @security.authorization_checker
+            - @app.thumb_manager
+            - @app.path_resolver
+
+    app.locality_listener:
+        class: AppBundle\EventListener\LocalityListener
+        arguments: [@doctrine, 8]
+        tags:
+            - { name: kernel.event_subscriber }
+
+
+    app.thumb_manager:
+        class: AppBundle\Utils\ThumbManager
+        arguments:
+            - @image.handling
+
+    twig.extension.thumnail:
+        class: AppBundle\Extensions\ThumbnailTwig
+        arguments: [@service_container, @doctrine.orm.em2_entity_manager]
+        tags:
+            - { name: twig.extension }
+    twig.extension.pagination:
+        class: AppBundle\Extensions\Pagination
+        arguments: [@service_container]
+        tags:
+            - { name: twig.extension }
+    twig.extension.text_utils:
+        class: AppBundle\Extensions\TextUtils
+        arguments: [@service_container]
+        tags:
+            - { name: twig.extension }
+
+    app.notifier:
+        class: AppBundle\Notifier\Notifier
+        arguments:
+            - @doctrine
+            - @jms_serializer
+            - "%zmq_notifier_address%"
+            - @app.signer
+            - "%backend_uri%"
+            - @libphonenumber.phone_number_util
+            
+
+    app.message_lifecycle_event_subscriber:
+        class: AppBundle\Subscriber\MessageLifecycleEventSubscriber
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }
+        arguments:
+            - @jms_serializer
+            - @event_dispatcher
+
+    app.notification_lifecycle_event_subscriber:
+        class: AppBundle\Subscriber\NotificationLifecycleEventSubscriber
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }
+        arguments:
+            - @jms_serializer
+            - @event_dispatcher
+
+    app.dictionaries_lifecycle_event_subscriber:
+        class: AppBundle\Subscriber\DictionariesLifecycleEventSubscriber
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }
+        arguments:
+            - @jms_serializer
+            - @event_dispatcher
+
+    app.balance_lifecycle_event_subscriber:
+        class: AppBundle\Subscriber\BalanceLifecycleEventSubscriber
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }
+        arguments:
+            - @logger
+
+    app.car_owner_request_lifecycle_event_subscriber:
+        class: AppBundle\Subscriber\CarOwnerRequestLifecycleEventSubscriber
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }
+        arguments:
+            - @jms_serializer
+            - @event_dispatcher
+            - @app.notification_lifecycle_event_subscriber
+
+    app.changes_event_listener:
+        class: AppBundle\EventListener\ChangesEventListener
+        tags:
+            - { name: kernel.event_subscriber }
+        arguments:
+            - @app.notifier
+            
+    app.token_auth_provider:
+        class: AppBundle\Security\Authentication\Provider\TokenAuthProvider
+        arguments:
+            - @doctrine.orm.default_entity_manager
+            - "%keys_path%"
+            - "%keys_passphrase%"
+            - "%secret%"
+            
+    app.signer:
+        class: AppBundle\Security\Signer\Signer
+        arguments:
+            - "%keys_path%"
+            - "%keys_passphrase%"
+            
+    app.sms_manager:
+        class: AppBundle\Utils\SmsManager
+        arguments:
+            - @libphonenumber.phone_number_util
+            - "%devino_login%"
+            - "%devino_pass%"
+
+    app.translit:
+        class: AppBundle\Utils\Translit
+
+    app.scheduler:
+        class: AppBundle\EntityManager\CarOwnerRequestScheduler
+        arguments:
+            - @doctrine.orm.default_entity_manager
+
+    app.validator.service:
+        class: AppBundle\Validator\Constraints\ServiceValidator
+        tags:
+            - { name: validator.constraint_validator }
+        arguments:
+            - @service_container
+
+    app.validator.car_service_post_available:
+        class: AppBundle\Validator\CarServicePostAvailableValidator
+        arguments:
+            - @doctrine.orm.default_entity_manager
+            - @app.scheduler
+
+    app.validator.schedule_time:
+        class: AppBundle\Validator\ScheduleTimeValidator
+        arguments:
+            - @doctrine.orm.default_entity_manager
+
+    app.validator.car_owner_request:
+        class: AppBundle\Validator\CarOwnerRequestValidator
+        arguments:
+            - @doctrine.orm.default_entity_manager

@@ -1,0 +1,17 @@
+AppBundle\Entity\Car:
+  exclusion_policy: ALL
+  properties:
+    id:
+      expose: true
+    brand:
+      expose: true
+    model:
+      expose: true
+    number:
+      expose: true
+    year:
+      expose: true
+    mileage:
+      expose: true
+    images:
+      expose: true

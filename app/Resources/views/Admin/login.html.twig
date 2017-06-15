@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<!--[if IE 9]>         <html class="ie9 no-focus"> <![endif]-->
+<!--[if gt IE 9]><!--> <html class="no-focus"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title></title>
+
+
+
+        <!-- Stylesheets -->
+        <!-- Web fonts -->
+        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400italic,600,700%7COpen+Sans:300,400,400italic,600,700">
+<!-- 
+        <link href='https://fonts.googleapis.com/css?family=Fira+Sans:400,300,500,700&subset=latin,cyrillic' rel='stylesheet' type='text/css'> -->
+
+        {% stylesheets
+            '../app/Resources/public/css/bootstrap.min.css'
+            '../app/Resources/public/css/oneui.min.css'
+            '../app/Resources/public/css/themes/city.min.css'
+            '../app/Resources/public/css/style.css'
+            '../app/Resources/public/css/autosolutions_adaptive.css'
+            %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+        {% endstylesheets %}
+		
+    </head>
+    <body style="background:rgba(0, 0, 0, 0) radial-gradient(circle farthest-side at 440px 340px , #598cd2, #294873) repeat fixed 0 0;">
+        <div  class="sidebar-l sidebar-o side-scroll header-navbar-fixed">
+
+            <!-- Main Container -->
+            <main id="main-container" class="_page_content_col">
+
+
+                <!-- Page Content -->
+                <div class="content">
+
+
+                    <div class="row">
+                        <div style="padding-top:50px">
+
+
+                            <div class="_login_block">
+                                <div class="_login_block_header">
+                                    <a href="/" class="_col">
+                                        <img src="/img/logo_carservice24_admin.png">
+                                    </a>
+                                </div>
+                                <div class="_login_block_seperator_wrap">
+                                    <div class="_login_block_seperator"></div> 
+                                </div>
+                                <div class="_login_block_content">
+                                    <form action="{{ path("_admin_login_check") }}"  method="post">
+                                        <div class="row">
+                                            <div class="col-md-9 text-danger">
+                                            {% if error %}<div class="alert _error">{{ 'login.bad_credentials' | trans }}</div>{% endif %}
+                                            {% if isDisabled %}<div class="alert">{{ 'login.disabled' | trans }}</div>{% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="row push-10">
+                                            <div class="col-md-2 push-10">
+                                                <div class="push-10-t">
+                                                    <img src="/images/enter_user.png">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-10">
+                                                <input type="text" name="_username" placeholder="Введите email или телефон" class="form-control input-lg">
+
+                                            </div>
+                                        </div>
+                                        <div class="row push-10">
+                                            <div class="col-md-2">
+                                                <div class="push-10-t">
+                                                    <img src="/images/enter_key.png">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-10">
+                                                <input type="password" name="_password" placeholder="Укажите ваш пароль" class="form-control input-lg push-10">
+                                                <!--<div class="col-md-12 text-right push-5">
+                                                    <a href="{{path('_resetting_request')}}" class="_login_block_forget_pass">Забыли пароль?</a>
+                                                </div>-->
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-10 col-md-offset-2">
+                                                <label class="push-20 css-input switch switch-sm switch-default">
+                                                    <input type="checkbox" checked=""><span></span> Запомнить меня
+                                                </label>
+                                                <button class="btn btn-danger btn-lg">Войти в систему</button>
+                                            </div>
+										</div>
+										<!--<div class="row">
+                                            <div class="col-md-12 text-center push-20-t">											
+												<a href="{{path('_car_owner_registration')}}" class="text-muted"><u>Зарегистрироваться в системе.</u></a>										
+											</div>			
+                                        </div>-->
+                                    </form>
+                                </div>
+
+							
+                            </div>
+							
+							
+
+
+                        </div>
+                    </div>
+
+
+                </div>
+                <!-- END Page Content -->
+            </main>
+            <!-- END Main Container -->
+
+        </div>
+        <!-- END Page Container -->
+
+        {% javascripts
+            '../app/Resources/public/js/jquery-2.1.1.min.js'
+            '../app/Resources/public/js/oneui.min.js'
+            '../app/Resources/public/js/add.js'
+            %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+
+		
+    </body>
+</html>

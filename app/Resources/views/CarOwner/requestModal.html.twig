@@ -1,0 +1,35 @@
+                    <div class="block" data-plugin="reviewModalContent" tabindex="-1" role="dialog" aria-hidden="false" data-url="{{ path('_create_request_review', {'id': '000'}) }}" data-request-id="{{ selectCarOwnerRequest.id }}">
+                        <div class="block-header">
+                            <ul class="block-options">
+                                <li>
+                                    <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+                                </li>
+                            </ul>
+                            <div class="lead">Ваша заявка №{{ selectCarOwnerRequest.id }} выполнена</div>
+                            <div class="muted">от {{ selectCarOwnerRequest.addedTimestamp| date('d.m.Y H:i') }}</div>
+                            <span>{{ selectCarOwnerRequest.carService.name }}</span> <span style="margin-left: 20px">{{ selectCarOwnerRequest.car.brand.name ~ ' ' ~ selectCarOwnerRequest.car.model.name }} {{ selectCarOwnerRequest.car.number }}</span>
+                        </div>
+                        <div class="block-content">
+                            <div>Пожалуйста оцените этот заказ</div>
+                            <div class="alert alert-danger" style="display: none;"></div>
+                            <input type="hidden" class="review_rate" data-plugin="rangeStars" name="rating">
+                            <textarea class="form-control push-10" rows="4" placeholder="Введите текст сообщения..." name="message"></textarea>
+
+                            <h4 style="font-weight: bold">Развернутая оценка</h4>
+                            <div class="row">
+                                <div class="col-md-6">Соответствие описанию</div>
+                                <div class="col-md-6"><input type="hidden" class="review_rate" data-plugin="rangeStars" name="descriptionRating" value="0"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">Понравилось ли вам обслуживание</div>
+                                <div class="col-md-6"><input type="hidden" class="review_rate" data-plugin="rangeStars" name="communicationRating" value="0"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">Соответсвует ли стоиомсть оказанной услуги заявленной</div>
+                                <div class="col-md-6"><input type="hidden" class="review_rate" data-plugin="rangeStars" name="priceRating" value="0"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-sm btn-danger review_send"><i class="fa fa-cog fa-spin" style="display: none;"></i>Отправить</button>
+                    </div>

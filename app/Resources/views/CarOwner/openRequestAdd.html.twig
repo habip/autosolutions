@@ -1,0 +1,450 @@
+{% extends '::mainLayout.html.twig' %}
+{% block title %}Создать заявку{% endblock %}
+
+{% block head %}
+    {{ parent() }}
+    {% stylesheets
+        '../app/Resources/public/js/plugins/bootstrap-datepicker/bootstrap-datepicker3.min.css'
+        %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
+{% endblock head %}
+
+
+{% block body %}
+
+         <div class="_new_tabs_wrap _col _col_12 _t_a_l">
+
+            <h3 class="_t_a_c _new_h3">
+               <div>Подать заявку на
+               {% if app.request.query.get('reason')==1 %}
+               ремонт
+               {% elseif app.request.query.get('reason')==2 %}
+               кузовной ремонт
+               {% elseif app.request.query.get('reason')==3 %}
+               автомойку
+               {% elseif app.request.query.get('reason')==4 %}
+               услугу шиномонтажа
+               {% endif %}
+               </div>
+               <div class="_new_big_text">вашего автомобиля</div>
+            </h3>
+
+            <ul class="_new_tabs_nav _row">
+               <li class="_new_tabs_nav_item _col _col_3 _t_a_c _done">
+                  <div class="_col _t_a_l">
+                     <i class="fa fa-wrench"></i>
+                  </div>
+                  <div class="_col _t_a_l">
+                     <b class="_new_tab_item_text">Cервис</b>
+                     <p class="_new_step">Шаг 1</p>
+                  </div>
+               </li>
+               <li class="_new_tabs_nav_item _col _col_3  _t_a_c _active">
+                  <div class="_col _t_a_l">
+                     <i class="fa fa-cog"></i>
+                  </div>
+                  <div class="_col _t_a_l">
+                     <b class="_new_tab_item_text">Условия</b>
+                     <p class="_new_step">Шаг 2</p>
+                  </div>
+               </li>
+               <li class="_new_tabs_nav_item _col _col_3  _t_a_c">
+                  <div class="_col _t_a_l">
+                     <i class="fa fa-user"></i>
+                  </div>
+                  <div class="_col _t_a_l">
+                     <b class="_new_tab_item_text">Данные</b>
+                     <p class="_new_step">Шаг 3</p>
+                  </div>
+               </li>
+               <li class="_new_tabs_nav_item _col _col_3  _t_a_c">
+                  <div class="_col _t_a_l">
+                     <i class="fa fa-check"></i>
+                  </div>
+                  <div class="_col _t_a_l">
+                     <b class="_new_tab_item_text">Результат</b>
+                     <p class="_new_step">Шаг 4</p>
+                  </div>
+               </li>
+            </ul>
+            <div class="_new_tabs_content _p_t_20 _t_a_c">
+
+                            <div class="_form _edit_form _col _col_8 _p_t_30 _step_content _step2" data-step="2">
+                                <div class="_f_s_20 _p_b_30 _t_a_c _c_orange">Запись в "<span class="select_carservice_name">{{ carService.name }}</span>" по адресу:<br><span class="select_carservice_address">{{ carService.locality.name }}, {{ carService.streetAddress }}</span></div>
+                              <div class="_edit_form_header _row">
+                                <div class="_row">
+                                  <div class="_col _col_6 _t_a_l">Укажите следующие данные</div>
+                                  <div class="_col _col_6 _t_a_r"></div>
+                                </div>
+                              </div>
+                              <div class="_edit_form_content">
+                                    <strong class="_custom_header _required">Выберите удобную дату заезда</strong>
+                                    <input type="text" class="_custom_input _input_date request_carowner_date" data-date-format="dd.mm.yyyy">
+
+                                    <strong class="_custom_header _required">Выберите удобное для вас время на <span class="select_date"></span></strong>
+                                    <select class="_custom_input request_carowner_time_period">
+                                        <option value="1">Первая половина дня</option>
+                                        <option value="2">Вторая половина дня</option>
+                                    </select>
+
+                                    <strong class="_custom_header _required">Марка</strong>
+                                    <input type="text" class="_custom_input" name="car_brand" data-plugin="searchselect" data-search="{{path('_search_brand')}}"{% if brand %} data-name="{{ brand.name }}" data-value="{{ brand.id }}{% endif %}">
+
+                                    <strong class="_custom_header _required">Модель</strong>
+                                    <input type="text" class="_custom_input" name="car_model" data-plugin="searchselect" data-search="{{path('_search_model')}}" data-related="car_brand" data-related-param="brand">
+
+                                    {% if app.request.query.get('reason')!=3 and app.request.query.get('reason')!=4 %}
+                                    <strong class="_custom_header _required">Год</strong>
+                                    <input type="text" class="_custom_input _input_year" name="car_year">
+
+                                    <strong class="_custom_header _required">Пробег</strong>
+                                    <input type="text" class="_custom_input _input_mileage" name="car_mileage">
+                                    {% endif %}
+
+                                    <strong class="_custom_header _required">Номер</strong>
+                                    {{ include(':Form:car_number.html.twig', { class: 'big' }) }}
+
+                                    <strong class="_custom_header">Работы</strong>
+                                    <div class="select_services _p_b_10{% if app.request.get('services') is empty %} _hide{% endif %}">
+                                    {% for service in services%}
+                                        {% set found = false %}
+                                        {% for gservice in app.request.get('services') %}
+                                            {% if service.id == gservice %}
+                                                {% set found = true %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        <p class="_p_all_5{% if found == false %} _hide{% endif %}" data-service="{{service.id}}">
+                                            <i class="fa fa-times-circle"></i>
+                                            <span>{{service.name}}</span>
+                                        </p>
+                                    {% endfor %}
+                                    </div>
+                                    <a class="_button  _add_select_service" data-toggle="modal" data-target="#select_services">Добавить</a>
+
+                                <div class="_t_a_c">
+                                  <a class="_button _big _prev">Назад</a>
+                                  <a class="_button _black _big _next">Далее</a>
+                                </div>
+                              </div>
+                            </div>
+
+
+
+
+                            <div class="_form _edit_form _col _col_8 _p_t_30 _step_content _step3 _hide"  data-step="3">
+                              <div class="_edit_form_header _orange _row">
+                                <div class="_row">
+                                  <div class="_col _col_6 _t_a_l">Ваши данные</div>
+                                  <div class="_col _col_6 _t_a_r"></div>
+                                </div>
+                              </div>
+                              <div class="_edit_form_content">
+                                    <strong class="_custom_header _required">Фамилия</strong>
+                                    <input type="text" class="_custom_input" name="user_lastname">
+
+                                    <strong class="_custom_header _required">Имя</strong>
+                                    <input type="text" class="_custom_input" name="user_name">
+
+                                    <strong class="_custom_header _required">Мобильный телефон</strong>
+                                    <input type="text" class="_custom_input request_phone _input_phone">
+
+                                    <strong class="_custom_header _required">Email</strong>
+                                    <input type="text" class="_custom_input request_email _input_email">
+
+                                    <strong class="_custom_header">Дополнительная информация</strong>
+                                    <textarea class="_custom_textarea request_description"></textarea>
+
+
+                                <div class="_t_a_c">
+                                  <a class="_button _big _prev">Назад</a>
+                                  <a class="_button _black _big _submit">Записаться</a>
+                                </div>
+                              </div>
+                            </div>
+
+
+
+
+                            <div class="_form _edit_form _col _col_8 _step_content _step4 _hide">
+                                <div class="_edit_form_content">
+                                    <div class="_f_s_20 _p_all_60 _t_a_c _c_orange">Спасибо за обращение,<br>Ваша заявка принята</div>
+                                    <div class="_t_a_c">На Ваш e-mail отправлено  письмо с подтверждением.<br>Посмотреть заявку вы можете в разделе <a href="{{path('_car_owner_requests')}}">мои заявки</a></div>
+                                </div>
+                            </div>
+
+
+            </div>
+         </div>
+
+{{ include(':Components:servicesModal.html.twig', {modal_id: 'select_services', oneui:true}) }}
+
+        <div class="modal fade in" id="service_detail_modal" tabindex="-1" role="dialog" aria-hidden="false">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="block">
+                        <div class="block-header">
+                            <ul class="block-options">
+                                <li>
+                                    <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+                                </li>
+                            </ul>
+                            <h2 class="remove-margin-b font-w300 push">Автосервис</h2>
+                        </div>
+                        <div class="block-content">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-sm btn-danger" type="button" data-dismiss="modal">
+                        Закрыть</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="error_required" class="modal_main">
+            <div class="modal_wall"></div>
+            <div class="modal_box">
+                <div class="modal_body">
+                    <h1 class="_custom_header">Ошибка</h1>
+                    <p class="_custom_header">Заполните обязательные поля что бы продолжить</p>
+                    <div class="_row">
+                        <div class="_col _col_12 _t_a_r">
+                            <a class="_button _orange modal_close">Закрыть</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="error_email_busy" class="modal_main">
+            <div class="modal_wall"></div>
+            <div class="modal_box">
+                <div class="modal_body">
+                    <!--<h1 class="_custom_header">Ошибка</h1>-->
+                    <p class="_custom_header">Этот email уже зарегистрирован в системе <a href="{{ path('_login') }}">войдите в систему</a> или используйте другой email</p>
+                    <div class="_row">
+                        <div class="_col _col_12 _t_a_r">
+                            <a class="_button _orange modal_close">Закрыть</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+{% endblock %}
+{% block js %}
+    <script>
+
+            var carservice_select = null,
+            changeReason = function(reasonId) {
+                var s = $('#select_services');
+                s.find('li[data-reason]').each(function(index, element) {
+                    var $el = $(element);
+                    if ($el.data('reason') == reasonId) {
+                        $el.show();
+                    } else {
+                        if ($el.hasClass('active')) {
+                            $el.removeClass('active');
+                        }
+                        $el.hide();
+                    }
+                });
+                s.find('div[data-reason]').hide();
+                var active = s.find('li[data-reason].active');
+                if (active.length == 0) {
+                    active = s.find('li[data-reason='+reasonId+']:eq(0)');
+                    active.addClass('active');
+                }
+                s.find('div#' + active.data('content-id')).show();
+                $('.carservice_search_services p').addClass('_hide');
+            };
+
+            changeReason({{ app.request.query.get('reason') }});
+
+            carservice_select = {{app.request.get('carServiceId')}};
+
+            //On "select services" modal open, check selected options
+            $('a._add_select_service').click(function() {
+                //selects might save their state on page load so force them select first option
+                $('#select_services select').each(function(){
+                    $(this).val($(this).find('option:eq(0)').val());
+                });
+
+                $('.select_services p').each(function() {
+                    var p = $(this),
+                    service = p.data('service'),
+                    el = $('#select_services input[data-service='+service+'], #select_services select option[value='+service+']');
+
+                    if (el.prop('tagName').toUpperCase() == 'INPUT') {
+                        el.prop('checked', !p.hasClass('_hide'));
+                    } else {
+                        if (!p.hasClass('_hide')) {
+                            el.parent().val(el.val());
+                        }
+                    }
+                });
+            });
+
+            //On press add button on "select services" modal - add selected service on page and then uncheck all of them on modal
+            $('#select_services ._add').click(function() {
+                var count = 0;
+                $('#select_services input').each(function() {
+                    if ($(this).prop('checked')){
+                        $('.select_services p[data-service='+$(this).data('service')+']').removeClass('_hide');
+                        count++;
+                    } else {
+                        $('.select_services p[data-service='+$(this).data('service')+']').addClass('_hide');
+                    }
+                });
+                $('#select_services select option').each(function() {
+                    $('.select_services p[data-service='+$(this).val()+']').addClass('_hide');
+                });
+                $('#select_services select').each(function() {
+                    var val = $(this).val();
+                    if (val!='' && val!='null') {
+                        $('.select_services p[data-service='+val+']').removeClass('_hide');
+                        count++;
+                    }
+                });
+
+                if (count==0)
+                    $('.select_services').addClass('_hide');
+                else
+                    $('.select_services').removeClass('_hide');
+                $('#select_services').modal('hide');
+                $('#select_services input').each(function(){
+                    $(this).prop('checked', false);
+                });
+                $('#select_services select').each(function(){
+                    $(this).val($(this).find('option:eq(0)').val());
+                });
+            });
+
+            //On selected service cross icon click - hide it
+            $('.select_services i').click(function(){
+                $('.select_services p[data-service='+$(this).closest('p').data('service')+']').addClass('_hide');
+                var count = 0;
+                $('.select_services p').each(function(){
+                    if (!$(this).hasClass('_hide'))
+                        count++;
+                });
+                if (count==0)
+                    $('.select_services').addClass('_hide');
+                else
+                    $('.select_services').removeClass('_hide');
+            });
+
+            $('._step2 ._next').click(function(){
+                $('.select_date').text($('.request_carowner_date').val());
+            });
+
+            window.history.replaceState({step: 2}, 'Step 2');
+            window.addEventListener('popstate', function(e) {
+                $('._new_tabs_nav_item').removeClass('_active');
+                $('._new_tabs_nav_item:eq(' + (e.state.step-1) + ')').addClass('_active');
+                $('._new_tabs_nav_item:lt(' + (e.state.step-1) + ')').addClass('_done');
+                $('._new_tabs_nav_item:gt(' + (e.state.step-1) + ')').removeClass('_done');
+                $('._step_content').addClass('_hide');
+                $('._step'+e.state.step).removeClass('_hide');
+            }, false);
+
+            $('._prev').on('click', function(event){
+                event.preventDefault();
+                window.history.go(-1);
+            });
+
+            $('._next').on('click', function(event){
+                event.preventDefault();
+                if ($('input[name=car_brand]').val().length==0 || $('input[name=car_model]').val().length==0 || $('input[name=car_number]').val().length==0){
+                    modal_open('error_required');
+                } else {
+                    $('._new_tabs_nav_item').removeClass('_active');
+                    $('._new_tabs_nav_item:eq(2)').addClass('_active');
+                    $('._step_content').addClass('_hide');
+                    $('._step3').removeClass('_hide');
+                    window.history.pushState({step: 3}, 'Step 3');
+                }
+                $('._new_tabs_nav_item:eq(1)').addClass('_done');
+            });
+
+            $('._step3 ._submit').click(function(){
+                    if ($('input[name=user_lastname]').val().length==0
+                    || $('input[name=user_name]').val().length==0
+                    || $('.request_phone').val().length==0
+                    || $('.request_email').val().length==0
+                    || $('.request_email').val().length==0
+                    ){
+                        modal_open('error_required');
+                    } else {
+                        var services = [];
+                        $('._step2 .select_services p').each(function(){
+                            if (!$(this).hasClass('_hide'))
+                                services[services.length] = $(this).data('service');
+                        });
+                        $.ajax({
+                            url: '{{path('_create_request_step1')}}',
+                            type: 'post',
+                            data: {
+                                'carOwnerDate': $('.request_carowner_date').val(),
+                                'carOwnerTimePeriod': $('.request_carowner_time_period').val(),
+                                'carService': carservice_select,
+                                'userFirstName': $('input[name=user_name]').val(),
+                                'userLastName': $('input[name=user_lastname]').val(),
+                                'carNumber': $('input[name=car_number]').val(),
+                                'carBrand': $('input[name=car_brand]').val(),
+                                'carModel': $('input[name=car_model]').val(),
+                                'carYear': $('input[name=car_year]').val(),
+                                'carMileage': $('input[name=car_mileage]').val(),
+                                'phone': $('.request_phone').val(),
+                                'email': $('.request_email').val(),
+                                'description': $('.request_description').val(),
+                                'services': services,
+                                'reason': {{ app.request.query.get('reason') }}
+                                },
+                            success: function(data){
+                                $(document).scrollTop(0);
+                                $('._step3').addClass('_hide');
+                                $('._step4').removeClass('_hide');
+                                $('._new_tabs_nav_item').removeClass('_active');
+                                $('._new_tabs_nav_item').removeClass('_done');
+                                $('._new_tabs_nav_item:eq(0), ._new_tabs_nav_item:eq(1), ._new_tabs_nav_item:eq(2)').addClass('_done');
+                                $('._new_tabs_nav_item:eq(3)').addClass('_active');
+                            },
+                            error: function(data) {
+                                modal_open('error_email_busy');
+                            }
+                        });
+                    }
+            });
+
+            (function () {
+                'use strict';
+                var _tab_func = function () {
+                    var tabs = document.querySelectorAll("[data-content-id]"),
+                        _tab_click = function (event) {
+                            var that = this,
+                            contents = $(that).closest('.services_modal').find("._services");
+
+                            Array.prototype.forEach.call(tabs, function (curr_el) {
+                                if (curr_el !== that) {
+                                    curr_el.classList.remove("active");
+                                }
+                            });
+                            that.classList.add("active");
+                            Array.prototype.forEach.call(contents, function (curr_el) {
+                                if ( curr_el !== document.querySelector("#" + that.getAttribute("data-content-id")) ) {
+                                    $(curr_el).hide();
+                                }
+                            });
+                            $("#" + that.getAttribute("data-content-id")).show();
+                            event.preventDefault();
+                        };
+                    Array.prototype.forEach.call(tabs, function (curr_el) {
+                        curr_el.addEventListener("click", _tab_click, false);
+                    });
+                };
+                document.addEventListener("DOMContentLoaded", _tab_func, false)
+            }());
+    </script>
+{% endblock %}
